@@ -6,13 +6,13 @@
     <title>Change Fund Portal</title>
     <style>
         :root {
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --bg: #f3f4f6;
-            --card-bg: #ffffff;
-            --border: #e5e7eb;
-            --text-main: #1f2937;
-            --text-muted: #6b7280;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --bg: #0b132b;          /* Deep navy background */
+            --card-bg: #1c2541;     /* Lighter navy container */
+            --border: #3a506b;      /* Muted border */
+            --text-main: #ffffff;   /* Pure white text */
+            --text-muted: #94a3b8;  /* Muted grey-blue text */
         }
 
         body {
@@ -30,7 +30,8 @@
             background: var(--card-bg);
             padding: 30px;
             border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border);
         }
 
         .tab-buttons {
@@ -48,7 +49,8 @@
             cursor: pointer;
             border-radius: 6px;
             border: 1px solid var(--border);
-            background: #f9fafb;
+            background: #162238;
+            color: var(--text-main);
             font-size: 1rem;
             transition: all 0.2s;
             margin-top: 0;
@@ -77,7 +79,7 @@
         .form-section {
             margin-bottom: 25px;
             padding: 20px;
-            background: #f9fafb;
+            background: #162238;
             border: 1px solid var(--border);
             border-radius: 8px;
         }
@@ -113,13 +115,14 @@
             border-radius: 6px;
             font-size: 1rem;
             transition: border-color 0.2s;
-            background-color: white;
+            background-color: #0b132b;
+            color: var(--text-main);
         }
 
         input:focus, select:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
         }
 
         button.action-btn {
@@ -141,8 +144,9 @@
         }
 
         button.action-btn:disabled {
-            background-color: #93c5fd;
+            background-color: #334155;
             cursor: not-allowed;
+            color: var(--text-muted);
         }
 
         table {
@@ -155,10 +159,11 @@
             padding: 12px;
             border-bottom: 1px solid var(--border);
             text-align: left;
+            color: var(--text-main);
         }
 
         th {
-            background-color: #f9fafb;
+            background-color: #162238;
             font-weight: 600;
         }
 
@@ -206,36 +211,36 @@
                     </div>
                 </div>
 
-                <!-- Bills -->
+                <!-- Top Drawer -->
                 <div class="form-section">
-                    <h3>Paper Currency</h3>
+                    <h3>Top Drawer</h3>
                     <div class="grid">
                         <div class="form-group"><label>500 Bundles</label><input type="number" step="any" name="entry.1517829846"></div>
                         <div class="form-group"><label>100 Bundles</label><input type="number" step="any" name="entry.1744081617"></div>
-                        <div class="form-group"><label>Large Bills</label><input type="number" step="any" name="entry.989973404"></div>
-                        <div class="form-group"><label>Fives</label><input type="number" step="any" name="entry.1524898992"></div>
-                        <div class="form-group"><label>Singles</label><input type="number" step="any" name="entry.252905748"></div>
-                    </div>
-                </div>
-
-                <!-- Boxes of Coins -->
-                <div class="form-section">
-                    <h3>Coin Boxes</h3>
-                    <div class="grid">
                         <div class="form-group"><label>Boxes of Quarters</label><input type="number" step="any" name="entry.898907270"></div>
                         <div class="form-group"><label>Boxes of Dimes</label><input type="number" step="any" name="entry.1372868115"></div>
                         <div class="form-group"><label>Boxes of Nickles</label><input type="number" step="any" name="entry.884010152"></div>
                     </div>
                 </div>
 
-                <!-- Rolls / Loose Coins -->
+                <!-- Coins -->
                 <div class="form-section">
-                    <h3>Coin Rolls & Pennies</h3>
+                    <h3>Coins</h3>
                     <div class="grid">
                         <div class="form-group"><label>Rolls of Quarters</label><input type="number" step="any" name="entry.521101649"></div>
                         <div class="form-group"><label>Rolls of Dimes</label><input type="number" step="any" name="entry.718207412"></div>
                         <div class="form-group"><label>Rolls of Nickles</label><input type="number" step="any" name="entry.890888806"></div>
                         <div class="form-group"><label>Pennies</label><input type="number" step="any" name="entry.1565754101"></div>
+                    </div>
+                </div>
+
+                <!-- Cash -->
+                <div class="form-section">
+                    <h3>Cash</h3>
+                    <div class="grid">
+                        <div class="form-group"><label>Singles</label><input type="number" step="any" name="entry.252905748"></div>
+                        <div class="form-group"><label>Fives</label><input type="number" step="any" name="entry.1524898992"></div>
+                        <div class="form-group"><label>Large Bills</label><input type="number" step="any" name="entry.989973404"></div>
                     </div>
                 </div>
 
@@ -263,9 +268,9 @@
                     </div>
                 </div>
 
-                <!-- Final Totals -->
+                <!-- Stats -->
                 <div class="form-section">
-                    <h3>Accounting</h3>
+                    <h3>Stats</h3>
                     <div class="grid">
                         <div class="form-group"><label>Received</label><input type="number" step="any" name="entry.1389957960"></div>
                         <div class="form-group"><label>Deposited</label><input type="number" step="any" name="entry.423453157"></div>
