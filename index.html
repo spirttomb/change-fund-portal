@@ -482,6 +482,195 @@
             });
 
             globalSheetData = rows;
+            populateDropdgroup"><label>Rolls of Quarters</label><input type="number" step="any" name="entry.521101649"></div>
+                        <div class="form-group"><label>Rolls of Dimes</label><input type="number" step="any" name="entry.718207412"></div>
+                        <div class="form-group"><label>Rolls of Nickles</label><input type="number" step="any" name="entry.890888806"></div>
+                        <div class="form-group"><label>Pennies</label><input type="number" step="any" name="entry.1565754101"></div>
+                    </div>
+                </div>
+
+                <!-- Cash -->
+                <div class="form-section">
+                    <h3>Cash</h3>
+                    <div class="grid">
+                        <div class="form-group"><label>Singles</label><input type="number" step="any" name="entry.252905748"></div>
+                        <div class="form-group"><label>Fives</label><input type="number" step="any" name="entry.1524898992"></div>
+                        <div class="form-group"><label>Large Bills</label><input type="number" step="any" name="entry.989973404"></div>
+                    </div>
+                </div>
+
+                <!-- Bags -->
+                <div class="form-section">
+                    <h3>Bags</h3>
+                    <div class="grid">
+                        <div class="form-group"><label>Bag #1</label><input type="number" step="any" name="entry.557609349"></div>
+                        <div class="form-group"><label>Bag #2</label><input type="number" step="any" name="entry.874061341"></div>
+                        <div class="form-group"><label>Bag #3</label><input type="number" step="any" name="entry.1215915283"></div>
+                        <div class="form-group"><label>Bag #4</label><input type="number" step="any" name="entry.2066716551"></div>
+                        <div class="form-group"><label>Bag #5</label><input type="number" step="any" name="entry.352372494"></div>
+                    </div>
+                </div>
+
+                <!-- Tills -->
+                <div class="form-section">
+                    <h3>Tills</h3>
+                    <div class="grid">
+                        <div class="form-group"><label>Till #1</label><input type="number" step="any" name="entry.1689010264"></div>
+                        <div class="form-group"><label>Till #2</label><input type="number" step="any" name="entry.406607956"></div>
+                        <div class="form-group"><label>Till #3</label><input type="number" step="any" name="entry.2100128588"></div>
+                        <div class="form-group"><label>Till #4</label><input type="number" step="any" name="entry.510240632"></div>
+                        <div class="form-group"><label>Till #5</label><input type="number" step="any" name="entry.1241719748"></div>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="form-section">
+                    <h3>Stats</h3>
+                    <div class="grid">
+                        <div class="form-group"><label>Received</label><input type="number" step="any" name="entry.1389957960"></div>
+                        <div class="form-group"><label>Deposited</label><input type="number" step="any" name="entry.423453157"></div>
+                    </div>
+                </div>
+
+                <button type="submit" id="submit-btn" class="action-btn">Submit Entry</button>
+            </form>
+        </div>
+
+        <!-- Success Message Container -->
+        <div id="success-message">
+            <div class="success-icon">✓</div>
+            <h2>Successfully Logged!</h2>
+            <p>Your change fund counts have been recorded.</p>
+            <button onclick="resetForm()" class="action-btn" style="width: auto; padding: 10px 20px; background-color: var(--card-bg); color: var(--text-main);">Submit Another Log Entry</button>
+        </div>
+    </div>
+
+    <!-- PANEL 2: VIEW RECORDS UI -->
+    <div id="panel-view" class="panel">
+        <h1>Log Viewer</h1>
+        
+        <!-- Filter Controls for Entry 1 -->
+        <div class="form-section">
+            <h3>Filter Primary Entry</h3>
+            <div class="filter-grid-primary">
+                <div class="form-group">
+                    <label>Filter by Name</label>
+                    <select id="filter-name" onchange="populateDropdowns()">
+                        <option value="">All Names</option>
+                        <option value="Emma">Emma</option>
+                        <option value="Fawn">Fawn</option>
+                        <option value="Jaida">Jaida</option>
+                        <option value="Josh">Josh</option>
+                        <option value="Kendal">Kendal</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Filter by Date</label>
+                    <input type="date" id="filter-date" onchange="populateDropdowns()">
+                </div>
+                <div class="form-group" style="align-self: end;">
+                    <button type="button" class="action-btn" style="margin-top:0; padding: 10px 15px; background-color: var(--card-bg); color: var(--text-main);" onclick="clearDropdownFilters()">Reset</button>
+                </div>
+                <div class="form-group" style="align-self: end;">
+                    <button type="button" class="action-btn" id="compare-toggle-btn" style="margin-top:0; padding: 10px 15px; background-color: var(--card-bg); color: var(--text-main);" onclick="toggleCompareMode()">Compare</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Controls for Entry 2 (Hidden by Default) -->
+        <div class="form-section" id="compare-section" style="display: none;">
+            <h3>Filter Comparison Entry</h3>
+            <div class="filter-grid-secondary">
+                <div class="form-group">
+                    <label>Filter by Name</label>
+                    <select id="filter-name-2" onchange="populateDropdowns()">
+                        <option value="">All Names</option>
+                        <option value="Emma">Emma</option>
+                        <option value="Fawn">Fawn</option>
+                        <option value="Jaida">Jaida</option>
+                        <option value="Josh">Josh</option>
+                        <option value="Kendal">Kendal</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Filter by Date</label>
+                    <input type="date" id="filter-date-2" onchange="populateDropdowns()">
+                </div>
+                <div class="form-group" style="align-self: end;">
+                    <button type="button" class="action-btn" style="margin-top:0; padding: 10px 15px; background-color: var(--card-bg); color: var(--text-main);" onclick="clearCompareFilters()">Reset</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dropdowns Grid -->
+        <div class="form-section">
+            <div class="dropdowns-grid-container" id="dropdowns-grid">
+                <div class="form-group">
+                    <label>Select Entry</label>
+                    <select id="record-dropdown" onchange="displayRecordData()">
+                        <option value="">Loading entry...</option>
+                    </select>
+                </div>
+                <div class="form-group" id="record-dropdown-2-container" style="display: none;">
+                    <label>Select Comparison Entry</label>
+                    <select id="record-dropdown-2" onchange="displayRecordData()">
+                        <option value="">Loading entry...</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div id="data-display">
+            <!-- Categorized breakdown / comparison will appear here -->
+        </div>
+    </div>
+</div>
+
+<script>
+    const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLScZ4ryPqOEApRXtqxg3Bu0_4Prijl6wYOcfOqmPprP9lhUWeA/formResponse';
+    const SHEET_ID = '1wziv2JVhSkdABUvgbyOsujHL_cNCTZuvQziu7MX98F8';
+
+    let globalSheetData = [];
+    let isComparing = false;
+
+    function switchTab(tab) {
+        document.getElementById('panel-submit').classList.toggle('active', tab === 'submit');
+        document.getElementById('panel-view').classList.toggle('active', tab === 'view');
+        document.getElementById('btn-submit').classList.toggle('active', tab === 'submit');
+        document.getElementById('btn-view').classList.toggle('active', tab === 'view');
+        
+        if (tab === 'view' && globalSheetData.length === 0) {
+            fetchSheetData();
+        }
+    }
+
+    // Fetch data directly using Google's Visualization API (with Date parsing fix)
+    async function fetchSheetData() {
+        try {
+            const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=Data&tqx=out:json`;
+            const response = await fetch(url);
+            const text = await response.text();
+            
+            const jsonText = text.substring(47, text.length - 2);
+            const json = JSON.parse(jsonText);
+
+            const rows = [];
+            const headers = json.table.cols.map(col => col.label || '');
+            rows.push(headers);
+
+            json.table.rows.forEach(r => {
+                const rowData = r.c.map(cell => {
+                    if (!cell) return '';
+                    if (cell.v && typeof cell.v === 'string' && cell.v.startsWith('Date(')) {
+                        const parts = cell.v.match(/\d+/g).map(Number);
+                        return new Date(parts[0], parts[1], parts[2], parts[3] || 0, parts[4] || 0, parts[5] || 0);
+                    }
+                    return cell.v !== null ? cell.v : (cell.f || '');
+                });
+                rows.push(rowData);
+            });
+
+            globalSheetData = rows;
             populateDropdowns();
         } catch (error) {
             console.error('Error fetching sheet data:', error);
