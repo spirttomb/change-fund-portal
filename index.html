@@ -473,22 +473,22 @@
                 <!-- Stats -->
                 <div class="form-section">
                     <h3>Stats</h3>
-                    <div style="margin-bottom: 15px; display: flex; gap: 20px; flex-wrap: wrap;">
-                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal;">
-                            <input type="checkbox" id="check-received" onchange="toggleStatField('received')"> Input Change Fund Received
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal;">
-                            <input type="checkbox" id="check-deposited" onchange="toggleStatField('deposited')"> Input Change Fund Deposited
-                        </label>
-                    </div>
-                    <div class="grid">
-                        <div class="form-group conditional-group" id="group-received">
-                            <label>Received</label>
-                            <input type="number" step="any" name="entry.1389957960" id="input-received">
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+                        <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal; font-size: 0.8rem; white-space: nowrap; margin-bottom: 0;">
+                                <input type="checkbox" id="check-received" onchange="toggleStatField('received')"> Change Fund Received
+                            </label>
+                            <div class="form-group conditional-group" id="group-received" style="flex: 1; min-width: 200px;">
+                                <input type="number" step="any" name="entry.1389957960" id="input-received" placeholder="Received amount">
+                            </div>
                         </div>
-                        <div class="form-group conditional-group" id="group-deposited">
-                            <label>Deposited</label>
-                            <input type="number" step="any" name="entry.423453157" id="input-deposited">
+                        <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal; font-size: 0.8rem; white-space: nowrap; margin-bottom: 0;">
+                                <input type="checkbox" id="check-deposited" onchange="toggleStatField('deposited')"> Change Fund Deposited
+                            </label>
+                            <div class="form-group conditional-group" id="group-deposited" style="flex: 1; min-width: 200px;">
+                                <input type="number" step="any" name="entry.423453157" id="input-deposited" placeholder="Deposited amount">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -856,7 +856,6 @@
         let cashHTML = `<div class="form-section"><h3>Cash</h3><table>`;
         cashFields.forEach(field => {
             cashTotal1 += parseNum(row1[field.index]);
-            coinsHTML += ``; // placeholder
             cashHTML += `<tr><td style="font-weight: 600; width: 35%;">${field.label}</td>${getCellContent(field.index)}</tr>`;
         });
         cashHTML += `</table></div>`;
