@@ -303,9 +303,11 @@
 </div>
 
 <script>
-    // PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyJfLHvKO8TZJAuL_egbwW0AMxOn43Mg8WmFugENbBwTLuSy-jE6NltykQ692x-Z0Wx/exec';
+    // PASTE YOUR GOOGLE FORM URL HERE
     const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLScZ4ryPqOEApRXtqxg3Bu0_4Prijl6wYOcfOqmPprP9lhUWeA/formResponse';
+    
+    // PASTE YOUR GOOGLE SHEET ID HERE (found in your sheet's web URL)
+    const SHEET_ID = '1wziv2JVhSkdABUvgbyOsujHL_cNCTZuvQziu7MX98F8';
 
     let globalSheetData = [];
 
@@ -320,11 +322,28 @@
         }
     }
 
-    // Fetch data from Google Sheet via Apps Script
+    // Fetch data directly using Google's Visualization API (Bypasses Apps Script CORS blocks)
     async function fetchSheetData() {
         try {
-            const response = await fetch(APPS_SCRIPT_URL);
-            globalSheetData = await response.json();
+            const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=Data&tqx=out:json`;
+            const response = await fetch(url);
+            const text = await response.text();
+            
+            // Google wraps its JSON response in a callback function. Strip it out:
+            const jsonText = text.substring(47, text.length - 2);
+            const json = JSON.parse(jsonText);
+
+            // Transform Google's table format into a clean 2D array
+            const rows = [];
+            const headers = json.table.cols.map(col => col.label || '');
+            rows.push(headers);
+
+            json.table.rows.forEach(r => {
+                const rowData = r.c.map(cell => (cell && cell.v !== null) ? cell.v : '');
+                rows.push(rowData);
+            });
+
+            globalSheetData = rows;
             populateDropdown();
         } catch (error) {
             console.error('Error fetching sheet data:', error);
