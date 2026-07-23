@@ -8,7 +8,7 @@
         /* Define your custom OTF font here */
         @font-face {
             font-family: 'CustomOTFFont';
-            src: url(apercu_regular_pro.otf') format('opentype');
+            src: url('apercu_regular_pro.otf') format('opentype');
             font-weight: normal;
             font-style: normal;
         }
@@ -23,6 +23,7 @@
             --text-main: #ffffff;   /* White text */
             --text-dark: #000000;   /* Black text */
             --text-muted: #cbd5e1;
+            --diff-color: #dc2626;  /* Red for differences */
         }
 
         body {
@@ -36,19 +37,19 @@
 
 
         /* Ensure inputs, selects, options, buttons, and tables all pull the custom font */
-h1, h2, h3, input, select, option, button, th, td, label {
-    font-family: 'CustomOTFFont', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-}
+        h1, h2, h3, input, select, option, button, th, td, label {
+            font-family: 'CustomOTFFont', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
 
         .container {
-    max-width: 800px;
-    margin: 0 auto;
-    background: #ffffff;               /* Inside background is white */
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
-    border: 12px solid #002a4f;         /* Rounded trim outline set to #002a4f */
-}
+            max-width: 800px;
+            margin: 0 auto;
+            background: #ffffff;               /* Inside background is white */
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+            border: 12px solid #002a4f;         /* Rounded trim outline set to #002a4f */
+        }
 
         .tab-buttons {
             display: flex;
@@ -59,19 +60,19 @@ h1, h2, h3, input, select, option, button, th, td, label {
         }
 
         .tab-buttons button {
-    flex: 1;
-    padding: 12px;
-    font-weight: bold;
-    cursor: pointer;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    background: var(--card-bg);
-    color: var(--text-main);
-    font-size: 1rem;
-    transition: all 0.2s;
-    margin-top: 0;
-    font-family: inherit; /* Add this line */
-}
+            flex: 1;
+            padding: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text-main);
+            font-size: 1rem;
+            transition: all 0.2s;
+            margin-top: 0;
+            font-family: inherit;
+        }
 
         .tab-buttons button.active {
             background: var(--primary);
@@ -328,13 +329,13 @@ h1, h2, h3, input, select, option, button, th, td, label {
     <div id="panel-view" class="panel">
         <h1>Log Viewer</h1>
         
-                <!-- Filter Controls for the Dropdown -->
+        <!-- Filter Controls for Entry 1 -->
         <div class="form-section">
-            <h3>Filter</h3>
-            <div class="grid" style="grid-template-columns: 1fr 1fr auto; align-items: end;">
+            <h3>Filter Primary Entry</h3>
+            <div class="grid" style="grid-template-columns: 1fr 1fr auto auto; align-items: end;">
                 <div class="form-group">
                     <label>Filter by Name</label>
-                    <select id="filter-name" onchange="populateDropdown()">
+                    <select id="filter-name" onchange="populateDropdowns()">
                         <option value="">All Names</option>
                         <option value="Emma">Emma</option>
                         <option value="Fawn">Fawn</option>
@@ -345,25 +346,62 @@ h1, h2, h3, input, select, option, button, th, td, label {
                 </div>
                 <div class="form-group">
                     <label>Filter by Date</label>
-                    <input type="date" id="filter-date" onchange="populateDropdown()">
+                    <input type="date" id="filter-date" onchange="populateDropdowns()">
                 </div>
                 <div class="form-group" style="align-self: end;">
-                    <button type="button" class="action-btn" style="margin-top:0; padding: 10px 15px; background-color: var(--category-bg); color: var(--text-main);" onclick="clearDropdownFilters()">Reset</button>
+                    <button type="button" class="action-btn" style="margin-top:0; padding: 10px 15px; background-color: var(--card-bg); color: var(--text-main);" onclick="clearDropdownFilters()">Reset</button>
+                </div>
+                <div class="form-group" style="align-self: end;">
+                    <button type="button" class="action-btn" id="compare-toggle-btn" style="margin-top:0; padding: 10px 15px; background-color: var(--card-bg); color: var(--text-main);" onclick="toggleCompareMode()">Compare</button>
                 </div>
             </div>
         </div>
 
+        <!-- Filter Controls for Entry 2 (Hidden by Default) -->
+        <div class="form-section" id="compare-section" style="display: none;">
+            <h3>Filter Comparison Entry</h3>
+            <div class="grid" style="grid-template-columns: 1fr 1fr auto; align-items: end;">
+                <div class="form-group">
+                    <label>Filter by Name</label>
+                    <select id="filter-name-2" onchange="populateDropdowns()">
+                        <option value="">All Names</option>
+                        <option value="Emma">Emma</option>
+                        <option value="Fawn">Fawn</option>
+                        <option value="Jaida">Jaida</option>
+                        <option value="Josh">Josh</option>
+                        <option value="Kendal">Kendal</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Filter by Date</label>
+                    <input type="date" id="filter-date-2" onchange="populateDropdowns()">
+                </div>
+                <div class="form-group" style="align-self: end;">
+                    <button type="button" class="action-btn" style="margin-top:0; padding: 10px 15px; background-color: var(--card-bg); color: var(--text-main);" onclick="clearCompareFilters()">Reset</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dropdowns Grid -->
         <div class="form-section">
-            <div class="form-group">
-                <label>Select Entry</label>
-                <select id="record-dropdown" onchange="displayRecordData()">
-                    <option value="">Loading entry...</option>
-                </select>
+            <div class="grid" id="dropdowns-grid" style="grid-template-columns: 1fr;">
+                <div class="form-group">
+                    <label>Select Entry</label>
+                    <select id="record-dropdown" onchange="displayRecordData()">
+                        <option value="">Loading entry...</option>
+                    </select>
+                </div>
+                <div class="form-group" id="record-dropdown-2-container" style="display: none;">
+                    <label>Select Comparison Entry</label>
+                    <select id="record-dropdown-2" onchange="displayRecordData()">
+                        <option value="">Loading entry...</option>
+                    </select>
+                </div>
             </div>
         </div>
 
         <div id="data-display">
-            <!-- Categorized breakdown will appear here -->
+            <!-- Categorized breakdown / comparison will appear here -->
         </div>
     </div>
 </div>
@@ -373,6 +411,7 @@ h1, h2, h3, input, select, option, button, th, td, label {
     const SHEET_ID = '1wziv2JVhSkdABUvgbyOsujHL_cNCTZuvQziu7MX98F8';
 
     let globalSheetData = [];
+    let isComparing = false;
 
     function switchTab(tab) {
         document.getElementById('panel-submit').classList.toggle('active', tab === 'submit');
@@ -412,21 +451,57 @@ h1, h2, h3, input, select, option, button, th, td, label {
             });
 
             globalSheetData = rows;
-            populateDropdown();
+            populateDropdowns();
         } catch (error) {
             console.error('Error fetching sheet data:', error);
             document.getElementById('record-dropdown').innerHTML = '<option>Error loading data</option>';
+            document.getElementById('record-dropdown-2').innerHTML = '<option>Error loading data</option>';
         }
     }
     
-    // Filter and populate the dropdown showing clean Date and Name labels
-    function populateDropdown() {
-        const dropdown = document.getElementById('record-dropdown');
-        const selectedNameFilter = document.getElementById('filter-name').value.toLowerCase();
-        const selectedDateFilter = document.getElementById('filter-date').value; // YYYY-MM-DD
+    // Toggle Compare Mode UI and state
+    function toggleCompareMode() {
+        isComparing = !isComparing;
+        const compareSection = document.getElementById('compare-section');
+        const dropdown2Container = document.getElementById('record-dropdown-2-container');
+        const dropdownsGrid = document.getElementById('dropdowns-grid');
+        const toggleBtn = document.getElementById('compare-toggle-btn');
+
+        if (isComparing) {
+            compareSection.style.display = 'block';
+            dropdown2Container.style.display = 'flex';
+            dropdownsGrid.style.gridTemplateColumns = '1fr 1fr';
+            toggleBtn.style.backgroundColor = 'var(--primary)';
+            toggleBtn.textContent = 'Exit Compare';
+        } else {
+            compareSection.style.display = 'none';
+            dropdown2Container.style.display = 'none';
+            dropdownsGrid.style.gridTemplateColumns = '1fr';
+            toggleBtn.style.backgroundColor = 'var(--card-bg)';
+            toggleBtn.textContent = 'Compare';
+            document.getElementById('filter-name-2').value = '';
+            document.getElementById('filter-date-2').value = '';
+            document.getElementById('record-dropdown-2').value = '';
+        }
+        populateDropdowns();
+        displayRecordData();
+    }
+
+    // Filter and populate both dropdowns
+    function populateDropdowns() {
+        populateSingleDropdown('record-dropdown', 'filter-name', 'filter-date', 'Select an entry...');
+        if (isComparing) {
+            populateSingleDropdown('record-dropdown-2', 'filter-name-2', 'filter-date-2', 'Select a comparison entry...');
+        }
+    }
+
+    function populateSingleDropdown(dropdownId, nameFilterId, dateFilterId, defaultText) {
+        const dropdown = document.getElementById(dropdownId);
+        const selectedNameFilter = document.getElementById(nameFilterId).value.toLowerCase();
+        const selectedDateFilter = document.getElementById(dateFilterId).value; // YYYY-MM-DD
         
-        dropdown.innerHTML = '<option value="">Select a submission...</option>';
-        document.getElementById('data-display').innerHTML = '';
+        const currentSelection = dropdown.value;
+        dropdown.innerHTML = `<option value="">${defaultText}</option>`;
         
         if (globalSheetData.length <= 1) return;
 
@@ -456,19 +531,29 @@ h1, h2, h3, input, select, option, button, th, td, label {
                     let label = `${formattedDate} - ${properName}`;
                     
                     let opt = document.createElement('option');
-                    opt.value = i; // Store exact row index for precise lookup
+                    opt.value = i;
                     opt.textContent = label;
                     dropdown.appendChild(opt);
                 }
             }
         }
+        dropdown.value = currentSelection;
     }
 
-    // Reset Dropdown Filters
+    // Reset Dropdown Filters for Primary
     function clearDropdownFilters() {
         document.getElementById('filter-name').value = '';
         document.getElementById('filter-date').value = '';
-        populateDropdown();
+        populateDropdowns();
+        displayRecordData();
+    }
+
+    // Reset Dropdown Filters for Comparison
+    function clearCompareFilters() {
+        document.getElementById('filter-name-2').value = '';
+        document.getElementById('filter-date-2').value = '';
+        populateDropdowns();
+        displayRecordData();
     }
 
     function parseNum(val) {
@@ -476,18 +561,38 @@ h1, h2, h3, input, select, option, button, th, td, label {
         return isNaN(num) ? 0 : num;
     }
 
-    // Display the record details grouped by category with calculated totals
+    // Display record data or compare two records with red discrepancies highlight
     function displayRecordData() {
-        const rowIndex = document.getElementById('record-dropdown').value;
+        const rowIndex1 = document.getElementById('record-dropdown').value;
+        const rowIndex2 = isComparing ? document.getElementById('record-dropdown-2').value : null;
         const displayDiv = document.getElementById('data-display');
         displayDiv.innerHTML = '';
 
-        if (!rowIndex) return;
+        if (!rowIndex1) return;
 
-        const row = globalSheetData[rowIndex];
-        if (!row) return;
+        const row1 = globalSheetData[rowIndex1];
+        const row2 = rowIndex2 ? globalSheetData[rowIndex2] : null;
+        if (!row1) return;
 
-        // Category 1: Top Drawer (500 Bundles, 100 Bundles, Boxes of Quarters, Boxes of Dimes, Boxes of Nickles)
+        // Helper to format values and determine mismatch coloring
+        function getCellContent(index, isTotal = false, customColor = null) {
+            let val1 = row1[index];
+            let disp1 = (val1 !== undefined && val1 !== null && val1 !== '') ? val1 : '-';
+
+            if (!row2) {
+                let colorStyle = customColor ? `color: ${customColor};` : '';
+                return `<td><span style="${colorStyle}">${disp1}</span></td>`;
+            } else {
+                let val2 = row2[index];
+                let disp2 = (val2 !== undefined && val2 !== null && val2 !== '') ? val2 : '-';
+                let isDiff = String(val1).trim() !== String(val2).trim();
+                let diffStyle = isDiff ? `color: var(--diff-color); font-weight: bold;` : (customColor ? `color: ${customColor};` : '');
+                
+                return `<td><div style="display: flex; justify-content: space-between; align-items: center;"><span style="${diffStyle}">${disp1}</span><span style="color: var(--text-muted); font-size: 0.85rem; margin: 0 8px;">vs</span><span style="${diffStyle}">${disp2}</span></div></td>`;
+            }
+        }
+
+        // Category 1: Top Drawer
         const topDrawerFields = [
             { label: "500 Bundles", index: 2 },
             { label: "100 Bundles", index: 3 },
@@ -495,50 +600,50 @@ h1, h2, h3, input, select, option, button, th, td, label {
             { label: "Boxes of Dimes", index: 8 },
             { label: "Boxes of Nickles", index: 9 }
         ];
-        let topDrawerTotal = 0;
+        let topDrawerTotal1 = 0, topDrawerTotal2 = 0;
         let topDrawerHTML = `<div class="form-section"><h3>Top Drawer</h3><table>`;
         topDrawerFields.forEach(field => {
-            let val = row[field.index];
-            topDrawerTotal += parseNum(val);
-            let displayVal = (val !== undefined && val !== null && val !== '') ? val : '-';
-            topDrawerHTML += `<tr><td style="font-weight: 600; width: 50%;">${field.label}</td><td>${displayVal}</td></tr>`;
+            let v1 = parseNum(row1[field.index]);
+            topDrawerTotal1 += v1;
+            let v2 = row2 ? parseNum(row2[field.index]) : 0;
+            if(row2) topDrawerTotal2 += v2;
+
+            topDrawerHTML += `<tr><td style="font-weight: 600; width: 35%;">${field.label}</td>${getCellContent(field.index)}</tr>`;
         });
         topDrawerHTML += `</table></div>`;
 
-        // Category 2: Coins (Rolls of Quarters, Rolls of Dimes, Rolls of Nickles, Pennies)
+        // Category 2: Coins
         const coinFields = [
             { label: "Rolls of Quarters", index: 10 },
             { label: "Rolls of Dimes", index: 11 },
             { label: "Rolls of Nickles", index: 12 },
             { label: "Pennies", index: 13 }
         ];
-        let coinsTotal = 0;
+        let coinsTotal1 = 0, coinsTotal2 = 0;
         let coinsHTML = `<div class="form-section"><h3>Coins</h3><table>`;
         coinFields.forEach(field => {
-            let val = row[field.index];
-            coinsTotal += parseNum(val);
-            let displayVal = (val !== undefined && val !== null && val !== '') ? val : '-';
-            coinsHTML += `<tr><td style="font-weight: 600; width: 50%;">${field.label}</td><td>${displayVal}</td></tr>`;
+            coinsTotal1 += parseNum(row1[field.index]);
+            if(row2) coinsTotal2 += parseNum(row2[field.index]);
+            coinsHTML += `<tr><td style="font-weight: 600; width: 35%;">${field.label}</td>${getCellContent(field.index)}</tr>`;
         });
         coinsHTML += `</table></div>`;
 
-        // Category 3: Cash (Singles, Fives, Large Bills)
+        // Category 3: Cash
         const cashFields = [
             { label: "Singles", index: 6 },
             { label: "Fives", index: 5 },
             { label: "Large Bills", index: 4 }
         ];
-        let cashTotal = 0;
+        let cashTotal1 = 0, cashTotal2 = 0;
         let cashHTML = `<div class="form-section"><h3>Cash</h3><table>`;
         cashFields.forEach(field => {
-            let val = row[field.index];
-            cashTotal += parseNum(val);
-            let displayVal = (val !== undefined && val !== null && val !== '') ? val : '-';
-            cashHTML += `<tr><td style="font-weight: 600; width: 50%;">${field.label}</td><td>${displayVal}</td></tr>`;
+            cashTotal1 += parseNum(row1[field.index]);
+            if(row2) cashTotal2 += parseNum(row2[field.index]);
+            cashHTML += `<tr><td style="font-weight: 600; width: 35%;">${field.label}</td>${getCellContent(field.index)}</tr>`;
         });
         cashHTML += `</table></div>`;
 
-        // Category 4: Bags (Bag #1 through #5 + Total Bags)
+        // Category 4: Bags
         const bagFields = [
             { label: "Bag #1", index: 14 },
             { label: "Bag #2", index: 15 },
@@ -546,18 +651,25 @@ h1, h2, h3, input, select, option, button, th, td, label {
             { label: "Bag #4", index: 17 },
             { label: "Bag #5", index: 18 }
         ];
-        let bagsTotal = 0;
+        let bagsTotal1 = 0, bagsTotal2 = 0;
         let bagsHTML = `<div class="form-section"><h3>Bags</h3><table>`;
         bagFields.forEach(field => {
-            let val = row[field.index];
-            bagsTotal += parseNum(val);
-            let displayVal = (val !== undefined && val !== null && val !== '') ? val : '-';
-            bagsHTML += `<tr><td style="font-weight: 600; width: 50%;">${field.label}</td><td>${displayVal}</td></tr>`;
+            bagsTotal1 += parseNum(row1[field.index]);
+            if(row2) bagsTotal2 += parseNum(row2[field.index]);
+            bagsHTML += `<tr><td style="font-weight: 600; width: 35%;">${field.label}</td>${getCellContent(field.index)}</tr>`;
         });
-        bagsHTML += `<tr><td style="font-weight: 700; width: 50%; color: var(--primary);">Total Bags</td><td style="font-weight: 700; color: var(--primary);">${bagsTotal}</td></tr>`;
+        
+        // Total Bags row handling for comparison
+        if (!row2) {
+            bagsHTML += `<tr><td style="font-weight: 700; width: 35%; color: var(--primary);">Total Bags</td><td style="font-weight: 700; color: var(--primary);">${bagsTotal1}</td></tr>`;
+        } else {
+            let isBagsDiff = bagsTotal1 !== bagsTotal2;
+            let diffStyle = isBagsDiff ? `color: var(--diff-color); font-weight: bold;` : `color: var(--primary); font-weight: 700;`;
+            bagsHTML += `<tr><td style="font-weight: 700; width: 35%; color: var(--primary);">Total Bags</td><td><div style="display: flex; justify-content: space-between; align-items: center;"><span style="${diffStyle}">${bagsTotal1}</span><span style="color: var(--text-muted); font-size: 0.85rem; margin: 0 8px;">vs</span><span style="${diffStyle}">${bagsTotal2}</span></div></td></tr>`;
+        }
         bagsHTML += `</table></div>`;
 
-        // Category 5: Tills (Till #1 through #5 + Total Tills)
+        // Category 5: Tills
         const tillFields = [
             { label: "Till #1", index: 19 },
             { label: "Till #2", index: 20 },
@@ -565,32 +677,62 @@ h1, h2, h3, input, select, option, button, th, td, label {
             { label: "Till #4", index: 22 },
             { label: "Till #5", index: 23 }
         ];
-        let tillsTotal = 0;
+        let tillsTotal1 = 0, tillsTotal2 = 0;
         let tillsHTML = `<div class="form-section"><h3>Tills</h3><table>`;
         tillFields.forEach(field => {
-            let val = row[field.index];
-            tillsTotal += parseNum(val);
-            let displayVal = (val !== undefined && val !== null && val !== '') ? val : '-';
-            tillsHTML += `<tr><td style="font-weight: 600; width: 50%;">${field.label}</td><td>${displayVal}</td></tr>`;
+            tillsTotal1 += parseNum(row1[field.index]);
+            if(row2) tillsTotal2 += parseNum(row2[field.index]);
+            tillsHTML += `<tr><td style="font-weight: 600; width: 35%;">${field.label}</td>${getCellContent(field.index)}</tr>`;
         });
-        tillsHTML += `<tr><td style="font-weight: 700; width: 50%; color: var(--primary);">Total Tills</td><td style="font-weight: 700; color: var(--primary);">${tillsTotal}</td></tr>`;
+
+        if (!row2) {
+            tillsHTML += `<tr><td style="font-weight: 700; width: 35%; color: var(--primary);">Total Tills</td><td style="font-weight: 700; color: var(--primary);">${tillsTotal1}</td></tr>`;
+        } else {
+            let isTillsDiff = tillsTotal1 !== tillsTotal2;
+            let diffStyle = isTillsDiff ? `color: var(--diff-color); font-weight: bold;` : `color: var(--primary); font-weight: 700;`;
+            tillsHTML += `<tr><td style="font-weight: 700; width: 35%; color: var(--primary);">Total Tills</td><td><div style="display: flex; justify-content: space-between; align-items: center;"><span style="${diffStyle}">${tillsTotal1}</span><span style="color: var(--text-muted); font-size: 0.85rem; margin: 0 8px;">vs</span><span style="${diffStyle}">${tillsTotal2}</span></div></td></tr>`;
+        }
         tillsHTML += `</table></div>`;
 
-        // Category 6: Stats (Received, Deposited, Total, Total Before Received, Total After Deposit, Total With Tills)
-        const receivedVal = parseNum(row[24]);
-        const depositedVal = parseNum(row[25]);
-        const grandTotal = topDrawerTotal + coinsTotal + cashTotal;
-        const totalBeforeReceived = grandTotal - receivedVal;
-        const totalAfterDeposit = grandTotal - depositedVal;
-        const totalWithTills = grandTotal + 1500;
+        // Category 6: Stats
+        const receivedVal1 = parseNum(row1[24]);
+        const depositedVal1 = parseNum(row1[25]);
+        const grandTotal1 = topDrawerTotal1 + coinsTotal1 + cashTotal1;
+        const totalBeforeReceived1 = grandTotal1 - receivedVal1;
+        const totalAfterDeposit1 = grandTotal1 - depositedVal1;
+        const totalWithTills1 = grandTotal1 + 1500;
+
+        let grandTotal2 = 0, totalBeforeReceived2 = 0, totalAfterDeposit2 = 0, totalWithTills2 = 0;
+        if (row2) {
+            const topDrawerTotal2 = topDrawerFields.reduce((acc, f) => acc + parseNum(row2[f.index]), 0);
+            const coinsTotal2 = coinFields.reduce((acc, f) => acc + parseNum(row2[f.index]), 0);
+            const cashTotal2 = cashFields.reduce((acc, f) => acc + parseNum(row2[f.index]), 0);
+            const receivedVal2 = parseNum(row2[24]);
+            const depositedVal2 = parseNum(row2[25]);
+            grandTotal2 = topDrawerTotal2 + coinsTotal2 + cashTotal2;
+            totalBeforeReceived2 = grandTotal2 - receivedVal2;
+            totalAfterDeposit2 = grandTotal2 - depositedVal2;
+            totalWithTills2 = grandTotal2 + 1500;
+        }
 
         let statsHTML = `<div class="form-section"><h3>Stats</h3><table>`;
-        statsHTML += `<tr><td style="font-weight: 600; width: 50%;">Received</td><td>${row[24] !== undefined && row[24] !== null && row[24] !== '' ? row[24] : '-'}</td></tr>`;
-        statsHTML += `<tr><td style="font-weight: 600; width: 50%;">Deposited</td><td>${row[25] !== undefined && row[25] !== null && row[25] !== '' ? row[25] : '-'}</td></tr>`;
-        statsHTML += `<tr><td style="font-weight: 700; width: 50%; color: var(--primary);">Total</td><td style="font-weight: 700; color: var(--primary);">${grandTotal}</td></tr>`;
-        statsHTML += `<tr><td style="font-weight: 700; width: 50%; color: var(--primary);">Total Before Received</td><td style="font-weight: 700; color: var(--primary);">${totalBeforeReceived}</td></tr>`;
-        statsHTML += `<tr><td style="font-weight: 700; width: 50%; color: var(--primary);">Total After Deposit</td><td style="font-weight: 700; color: var(--primary);">${totalAfterDeposit}</td></tr>`;
-        statsHTML += `<tr><td style="font-weight: 700; width: 50%; color: var(--primary);">Total With Tills</td><td style="font-weight: 700; color: var(--primary);">${totalWithTills}</td></tr>`;
+        statsHTML += `<tr><td style="font-weight: 600; width: 35%;">Received</td>${getCellContent(24)}</tr>`;
+        statsHTML += `<tr><td style="font-weight: 600; width: 35%;">Deposited</td>${getCellContent(25)}</tr>`;
+        
+        function getStatRowHTML(label, val1, val2) {
+            if (!row2) {
+                return `<tr><td style="font-weight: 700; width: 35%; color: var(--primary);">${label}</td><td style="font-weight: 700; color: var(--primary);">${val1}</td></tr>`;
+            } else {
+                let isDiff = val1 !== val2;
+                let diffStyle = isDiff ? `color: var(--diff-color); font-weight: bold;` : `color: var(--primary); font-weight: 700;`;
+                return `<tr><td style="font-weight: 700; width: 35%; color: var(--primary);">${label}</td><td><div style="display: flex; justify-content: space-between; align-items: center;"><span style="${diffStyle}">${val1}</span><span style="color: var(--text-muted); font-size: 0.85rem; margin: 0 8px;">vs</span><span style="${diffStyle}">${val2}</span></div></td></tr>`;
+            }
+        }
+
+        statsHTML += getStatRowHTML("Total", grandTotal1, grandTotal2);
+        statsHTML += getStatRowHTML("Total Before Received", totalBeforeReceived1, totalBeforeReceived2);
+        statsHTML += getStatRowHTML("Total After Deposit", totalAfterDeposit1, totalAfterDeposit2);
+        statsHTML += getStatRowHTML("Total With Tills", totalWithTills1, totalWithTills2);
         statsHTML += `</table></div>`;
 
         displayDiv.innerHTML = topDrawerHTML + coinsHTML + cashHTML + bagsHTML + tillsHTML + statsHTML;
@@ -623,7 +765,7 @@ h1, h2, h3, input, select, option, button, th, td, label {
             alert('There was an error submitting the form. Please check your connection.');
             console.error('Submission failed:', error);
         } finally {
-            submitBtn.textContent = 'Submit to Log';
+            submitBtn.textContent = 'Submit Entry';
             submitBtn.disabled = false;
         }
     });
