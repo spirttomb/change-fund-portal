@@ -35,14 +35,14 @@
         }
 
         .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--border);
-        }
+    max-width: 800px;
+    margin: 0 auto;
+    background: #ffffff;               /* Inside background is white */
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    border: 3px solid #002a4f;         /* Rounded trim outline set to #002a4f */
+}
 
         .tab-buttons {
             display: flex;
@@ -53,18 +53,19 @@
         }
 
         .tab-buttons button {
-            flex: 1;
-            padding: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-            background: var(--card-bg);
-            color: var(--text-main);
-            font-size: 1rem;
-            transition: all 0.2s;
-            margin-top: 0;
-        }
+    flex: 1;
+    padding: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--category-bg);
+    color: var(--text-main);
+    font-size: 1rem;
+    transition: all 0.2s;
+    margin-top: 0;
+    font-family: inherit; /* Add this line */
+}
 
         .tab-buttons button.active {
             background: var(--primary);
