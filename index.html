@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Change Fund Portal</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg: #f3f4f6;
+            --card-bg: #ffffff;
+            --border: #e5e7eb;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 15px;
+        }
+
+        .tab-buttons button {
+            flex: 1;
+            padding: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: #f9fafb;
+            font-size: 1rem;
+            transition: all 0.2s;
+            margin-top: 0;
+        }
+
+        .tab-buttons button.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .panel {
+            display: none;
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        h1, h2 {
+            text-align: center;
+            margin-top: 0;
+            color: var(--text-main);
+        }
+
+        .form-section {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f9fafb;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .form-section h3 {
+            margin-top: 0;
+            font-size: 1.1rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--text-main);
+        }
+
+        input, select {
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        button.action-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 20px;
+        }
+
+        button.action-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button.action-btn:disabled {
+            background-color: #93c5fd;
+            cursor: not-allowed;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            text-align: left;
+        }
+
+        th {
+            background-color: #f9fafb;
+            font-weight: 600;
+        }
+
+        #success-message {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .success-icon {
+            font-size: 3rem;
+            color: #10b981;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Top Navigation Tabs -->
+    <div class="tab-buttons">
+        <button id="btn-submit" class="active" onclick="switchTab('submit')">Log New Entry</button>
+        <button id="btn-view" onclick="switchTab('view')">View Records UI</button>
+    </div>
+
+    <!-- PANEL 1: SUBMIT NEW ENTRY FORM -->
+    <div id="panel-submit" class="panel active">
+        <div id="form-container">
+            <h1>Change Fund Log</h1>
+            
+            <form id="change-fund-form">
+                <!-- Personnel -->
+                <div class="form-section">
+                    <h3>Employee Info</h3>
+                    <div class="form-group">
+                        <label>Name</label>
+                        <select name="entry.2093033292" required>
+                            <option value="">Select your name...</option>
+                            <option value="Emma">Emma</option>
+                            <option value="Fawn">Fawn</option>
+                            <option value="Jaida">Jaida</option>
+                            <option value="Josh">Josh</option>
+                            <option value="Kendal">Kendal</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Bills -->
+                <div class="form-section">
+                    <h3>Paper Currency</h3>
+                    <div class="grid">
+                        <div class="form-group"><label>500 Bundles</label><input type="number" step="any" name="entry.1517829846"></div>
+                        <div class="form-group"><label>100 Bundles</label><input type="number" step="any" name="entry.1744081617"></div>
+                        <div class="form-group"><label>Large Bills</label><input type="number" step="any" name="entry.989973404"></div>
+                        <div class="form-group"><label>Fives</label><input type="number" step="any" name="entry.1524898992"></div>
+                        <div class="form-group"><label>Singles</label><input type="number" step="any" name="entry.252905748"></div>
+                    </div>
+                </div>
+
+                <!-- Boxes of Coins -->
+                <div class="form-section">
+                    <h3>Coin Boxes</h3>
+                    <div class="grid">
+                        <div class="form-group"><label>Boxes of Quarters</label><input type="number" step="any" name="entry.898907270"></div>
+                        <div class="form-group"><label>Boxes of Dimes</label><input type="number" step="any" name="entry.1372868115"></div>
+                        <div class="form-group"><label>Boxes of Nickles</label><input type="number" step="any" name="entry.884010152"></div>
+                    </div>
+                </div>
+
+                <!-- Rolls / Loose Coins -->
+                <div class="form-section">
+                    <h3>Coin Rolls & Pennies</h3>
+                    <div class="grid">
+                        <div class="form-group"><label>Rolls of Quarters</label><input type="number" step="any" name="entry.521101649"></div>
+                        <div class="form-group"><label>Rolls of Dimes</label><input type="number" step="any" name="entry.718207412"></div>
+                        <div class="form-group"><label>Rolls of Nickles</label><input type="number" step="any" name="entry.890888806"></div>
+                        <div class="form-group"><label>Pennies</label><input type="number" step="any" name="entry.1565754101"></div>
+                    </div>
+                </div>
+
+                <!-- Bags -->
+                <div class="form-section">
+                    <h3>Bags</h3>
+                    <div class="grid">
+                        <div class="form-group"><label>Bag #1</label><input type="number" step="any" name="entry.557609349"></div>
+                        <div class="form-group"><label>Bag #2</label><input type="number" step="any" name="entry.874061341"></div>
+                        <div class="form-group"><label>Bag #3</label><input type="number" step="any" name="entry.1215915283"></div>
+                        <div class="form-group"><label>Bag #4</label><input type="number" step="any" name="entry.2066716551"></div>
+                        <div class="form-group"><label>Bag #5</label><input type="number" step="any" name="entry.352372494"></div>
+                    </div>
+                </div>
+
+                <!-- Tills -->
+                <div class="form-section">
+                    <h3>Tills</h3>
+                    <div class="grid">
+                        <div class="form-group"><label>Till #1</label><input type="number" step="any" name="entry.1689010264"></div>
+                        <div class="form-group"><label>Till #2</label><input type="number" step="any" name="entry.406607956"></div>
+                        <div class="form-group"><label>Till #3</label><input type="number" step="any" name="entry.2100128588"></div>
+                        <div class="form-group"><label>Till #4</label><input type="number" step="any" name="entry.510240632"></div>
+                        <div class="form-group"><label>Till #5</label><input type="number" step="any" name="entry.1241719748"></div>
+                    </div>
+                </div>
+
+                <!-- Final Totals -->
+                <div class="form-section">
+                    <h3>Accounting</h3>
+                    <div class="grid">
+                        <div class="form-group"><label>Received</label><input type="number" step="any" name="entry.1389957960"></div>
+                        <div class="form-group"><label>Deposited</label><input type="number" step="any" name="entry.423453157"></div>
+                    </div>
+                </div>
+
+                <button type="submit" id="submit-btn" class="action-btn">Submit to Log</button>
+            </form>
+        </div>
+
+        <!-- Success Message Container -->
+        <div id="success-message">
+            <div class="success-icon">✓</div>
+            <h2>Successfully Logged!</h2>
+            <p>Your change fund counts have been recorded.</p>
+            <button onclick="resetForm()" class="action-btn" style="width: auto; padding: 10px 20px; background-color: var(--text-muted);">Submit Another Log</button>
+        </div>
+    </div>
+
+    <!-- PANEL 2: VIEW RECORDS UI (Replicating your Sheet Logic) -->
+    <div id="panel-view" class="panel">
+        <h1>Submission Viewer</h1>
+        <div class="form-section">
+            <div class="form-group">
+                <label>Select Submission (Timestamp - Name)</label>
+                <select id="record-dropdown" onchange="displayRecordData()">
+                    <option value="">Loading submissions...</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="data-display">
+            <!-- Filtered data rows will appear here -->
+        </div>
+    </div>
+</div>
+
+<script>
+    // PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyJfLHvKO8TZJAuL_egbwW0AMxOn43Mg8WmFugENbBwTLuSy-jE6NltykQ692x-Z0Wx/exec';
+    const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLScZ4ryPqOEApRXtqxg3Bu0_4Prijl6wYOcfOqmPprP9lhUWeA/formResponse';
+
+    let globalSheetData = [];
+
+    function switchTab(tab) {
+        document.getElementById('panel-submit').classList.toggle('active', tab === 'submit');
+        document.getElementById('panel-view').classList.toggle('active', tab === 'view');
+        document.getElementById('btn-submit').classList.toggle('active', tab === 'submit');
+        document.getElementById('btn-view').classList.toggle('active', tab === 'view');
+        
+        if (tab === 'view' && globalSheetData.length === 0) {
+            fetchSheetData();
+        }
+    }
+
+    // Fetch data from Google Sheet via Apps Script
+    async function fetchSheetData() {
+        try {
+            const response = await fetch(APPS_SCRIPT_URL);
+            globalSheetData = await response.json();
+            populateDropdown();
+        } catch (error) {
+            console.error('Error fetching sheet data:', error);
+            document.getElementById('record-dropdown').innerHTML = '<option>Error loading data</option>';
+        }
+    }
+
+    // Replicate UNIQUE(FILTER(...)) logic for the dropdown
+    function populateDropdown() {
+        const dropdown = document.getElementById('record-dropdown');
+        dropdown.innerHTML = '<option value="">Select a submission...</option>';
+        
+        const uniqueEntries = new Set();
+        for (let i = 1; i < globalSheetData.length; i++) {
+            let timestamp = globalSheetData[i][0]; // Column A
+            let name = globalSheetData[i][1];       // Column B
+
+            if (timestamp && name) {
+                let formattedDate = new Date(timestamp).toLocaleString('en-US', {
+                    month: 'numeric', day: 'numeric', year: '2-digit', 
+                    hour: 'numeric', minute: '2-digit', hour12: true
+                });
+                let properName = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+                let label = `${formattedDate} - ${properName}`;
+                
+                uniqueEntries.add(label);
+            }
+        }
+
+        uniqueEntries.forEach(entry => {
+            let opt = document.createElement('option');
+            opt.value = entry;
+            opt.textContent = entry;
+            dropdown.appendChild(opt);
+        });
+    }
+
+    // Replicate your FILTER(Data!J:J, ...) display logic
+    function displayRecordData() {
+        const selectedValue = document.getElementById('record-dropdown').value;
+        const displayDiv = document.getElementById('data-display');
+        displayDiv.innerHTML = '';
+
+        if (!selectedValue) return;
+
+        const targetStr = selectedValue.split(' - ')[0];
+
+        let tableHTML = `<div class="form-section"><h3>Details (Column J)</h3><table>`;
+        let matchCount = 0;
+
+        for (let i = 1; i < globalSheetData.length; i++) {
+            let timestamp = globalSheetData[i][0];
+            let colJData = globalSheetData[i][9]; // Column J index is 9 (0-indexed)
+
+            if (timestamp) {
+                let rowDateStr = new Date(timestamp).toLocaleString('en-US', {
+                    month: 'numeric', day: 'numeric', year: '2-digit', 
+                    hour: 'numeric', minute: '2-digit', hour12: true
+                });
+
+                if (rowDateStr === targetStr) {
+                    tableHTML += `<tr><td>${colJData || ''}</td></tr>`;
+                    matchCount++;
+                }
+            }
+        }
+        tableHTML += `</table></div>`;
+
+        displayDiv.innerHTML = matchCount > 0 ? tableHTML : '<p style="text-align:center; color:var(--text-muted);">No Matches Found</p>';
+    }
+
+    // Form Submission Handling
+    const form = document.getElementById('change-fund-form');
+    const submitBtn = document.getElementById('submit-btn');
+    const formContainer = document.getElementById('form-container');
+    const successMessage = document.getElementById('success-message');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        submitBtn.textContent = 'Submitting...';
+        submitBtn.disabled = true;
+
+        const formData = new FormData(form);
+
+        try {
+            await fetch(GOOGLE_FORM_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: formData
+            });
+
+            formContainer.style.display = 'none';
+            successMessage.style.display = 'block';
+            globalSheetData = []; // Clear cache so the view tab re-fetches latest updates
+        } catch (error) {
+            alert('There was an error submitting the form. Please check your connection.');
+            console.error('Submission failed:', error);
+        } finally {
+            submitBtn.textContent = 'Submit to Log';
+            submitBtn.disabled = false;
+        }
+    });
+
+    function resetForm() {
+        form.reset();
+        successMessage.style.display = 'none';
+        formContainer.style.display = 'block';
+        window.scrollTo(0, 0);
+    }
+</script>
+
+</body>
+</html>
