@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Change Fund Portal</title>
     <style>
+        /* Define your custom OTF font here */
+        @font-face {
+    font-family: 'CustomOTFFont';
+    src: url('apercu_regular_pro.otf') format('opentype');
+}
+
         :root {
             --primary: #3b82f6;
             --primary-hover: #2563eb;
@@ -16,7 +22,7 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'CustomOTFFont', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg);
             color: var(--text-main);
             margin: 0;
@@ -117,6 +123,7 @@
             transition: border-color 0.2s;
             background-color: #0b132b;
             color: var(--text-main);
+            font-family: inherit;
         }
 
         input:focus, select:focus {
@@ -137,6 +144,7 @@
             cursor: pointer;
             transition: background-color 0.2s;
             margin-top: 20px;
+            font-family: inherit;
         }
 
         button.action-btn:hover {
