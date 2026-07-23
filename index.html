@@ -328,10 +328,10 @@ h1, h2, h3, input, select, option, button, th, td, label {
     <div id="panel-view" class="panel">
         <h1>Submission Viewer</h1>
         
-        <!-- Filter Controls for the Dropdown -->
+                <!-- Filter Controls for the Dropdown -->
         <div class="form-section">
             <h3>Filter Submissions</h3>
-            <div class="grid" style="grid-template-columns: 1fr 1fr auto;">
+            <div class="grid" style="grid-template-columns: 1fr 1fr auto; align-items: end;">
                 <div class="form-group">
                     <label>Filter by Name</label>
                     <select id="filter-name" onchange="populateDropdown()">
@@ -347,8 +347,8 @@ h1, h2, h3, input, select, option, button, th, td, label {
                     <label>Filter by Date</label>
                     <input type="date" id="filter-date" onchange="populateDropdown()">
                 </div>
-                <div class="form-group">
-                    <button type="button" class="action-btn" style="margin-top:0; padding: 10px 15px; background-color: var(--card-bg); color: var(--text-main);" onclick="clearDropdownFilters()">Reset</button>
+                <div class="form-group" style="align-self: end;">
+                    <button type="button" class="action-btn" style="margin-top:0; padding: 10px 15px; background-color: var(--category-bg); color: var(--text-main);" onclick="clearDropdownFilters()">Reset</button>
                 </div>
             </div>
         </div>
