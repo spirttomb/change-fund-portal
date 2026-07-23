@@ -149,9 +149,19 @@
             align-items: end;
         }
 
+        /* Responsive Selection Dropdowns Grid */
+        .dropdowns-grid-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
         @media (max-width: 650px) {
             .filter-grid-primary, .filter-grid-secondary {
                 grid-template-columns: 1fr 1fr;
+            }
+            .dropdowns-grid-container.comparing {
+                grid-template-columns: 1fr !important;
             }
         }
 
@@ -405,7 +415,7 @@
 
         <!-- Dropdowns Grid -->
         <div class="form-section">
-            <div class="grid" id="dropdowns-grid" style="grid-template-columns: 1fr;">
+            <div class="dropdowns-grid-container" id="dropdowns-grid">
                 <div class="form-group">
                     <label>Select Entry</label>
                     <select id="record-dropdown" onchange="displayRecordData()">
@@ -492,12 +502,14 @@
             compareSection.style.display = 'block';
             dropdown2Container.style.display = 'flex';
             dropdownsGrid.style.gridTemplateColumns = '1fr 1fr';
+            dropdownsGrid.classList.add('comparing');
             toggleBtn.style.backgroundColor = 'var(--primary)';
             toggleBtn.textContent = 'Exit Compare';
         } else {
             compareSection.style.display = 'none';
             dropdown2Container.style.display = 'none';
             dropdownsGrid.style.gridTemplateColumns = '1fr';
+            dropdownsGrid.classList.remove('comparing');
             toggleBtn.style.backgroundColor = 'var(--card-bg)';
             toggleBtn.textContent = 'Compare';
             document.getElementById('filter-name-2').value = '';
