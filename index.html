@@ -324,7 +324,7 @@
         </div>
 
         <div id="data-display">
-            <!-- Filtered data rows will appear here -->
+            <!-- Full detailed breakdown will appear here -->
         </div>
     </div>
 </div>
@@ -380,7 +380,7 @@
         }
     }
     
-    // Filter and populate the dropdown showing submission details (Timestamp, Name, and Column J Details)
+    // Filter and populate the dropdown showing clean Date and Name labels
     function populateDropdown() {
         const dropdown = document.getElementById('record-dropdown');
         const selectedNameFilter = document.getElementById('filter-name').value.toLowerCase();
@@ -391,11 +391,9 @@
         
         if (globalSheetData.length <= 1) return;
 
-        const uniqueEntries = new Set();
         for (let i = 1; i < globalSheetData.length; i++) {
             let timestamp = globalSheetData[i][0]; // Column A
             let name = globalSheetData[i][1];        // Column B
-            let colJData = globalSheetData[i][9];    // Column J
 
             if (timestamp && name) {
                 let rowDate = new Date(timestamp);
@@ -416,21 +414,15 @@
                     });
                     let properName = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
                     
-                    // Include details (Column J) directly in the dropdown label so it shows log details
-                    let detailsSnippet = colJData ? ` - ${colJData}` : '';
-                    let label = `${formattedDate} - ${properName}${detailsSnippet}`;
+                    let label = `${formattedDate} - ${properName}`;
                     
-                    uniqueEntries.add(label);
+                    let opt = document.createElement('option');
+                    opt.value = i; // Store exact row index for precise lookup
+                    opt.textContent = label;
+                    dropdown.appendChild(opt);
                 }
             }
         }
-
-        uniqueEntries.forEach(entry => {
-            let opt = document.createElement('option');
-            opt.value = entry;
-            opt.textContent = entry;
-            dropdown.appendChild(opt);
-        });
     }
 
     // Reset Dropdown Filters
@@ -440,38 +432,54 @@
         populateDropdown();
     }
 
-    // Replicate your FILTER(Data!J:J, ...) display logic when an item is selected
+    // Display the full record details in the correct requested order
     function displayRecordData() {
-        const selectedValue = document.getElementById('record-dropdown').value;
+        const rowIndex = document.getElementById('record-dropdown').value;
         const displayDiv = document.getElementById('data-display');
         displayDiv.innerHTML = '';
 
-        if (!selectedValue) return;
+        if (!rowIndex) return;
 
-        const targetStr = selectedValue.split(' - ')[0];
+        const row = globalSheetData[rowIndex];
+        if (!row) return;
 
-        let tableHTML = `<div class="form-section"><h3>Details (Column J)</h3><table>`;
-        let matchCount = 0;
+        let tableHTML = `<div class="form-section"><h3>Submission Details</h3><table>`;
+        
+        const fieldMapping = [
+            { label: "500 Bundles", index: 2 },
+            { label: "100 Bundles", index: 3 },
+            { label: "Boxes of Quarters", index: 7 },
+            { label: "Boxes of Dimes", index: 8 },
+            { label: "Boxes of Nickles", index: 9 },
+            { label: "Rolls of Quarters", index: 10 },
+            { label: "Rolls of Dimes", index: 11 },
+            { label: "Rolls of Nickles", index: 12 },
+            { label: "Pennies", index: 13 },
+            { label: "Singles", index: 6 },
+            { label: "Fives", index: 5 },
+            { label: "Large Bills", index: 4 },
+            { label: "Bag #1", index: 14 },
+            { label: "Bag #2", index: 15 },
+            { label: "Bag #3", index: 16 },
+            { label: "Bag #4", index: 17 },
+            { label: "Bag #5", index: 18 },
+            { label: "Till #1", index: 19 },
+            { label: "Till #2", index: 20 },
+            { label: "Till #3", index: 21 },
+            { label: "Till #4", index: 22 },
+            { label: "Till #5", index: 23 },
+            { label: "Received", index: 24 },
+            { label: "Deposited", index: 25 }
+        ];
 
-        for (let i = 1; i < globalSheetData.length; i++) {
-            let timestamp = globalSheetData[i][0];
-            let colJData = globalSheetData[i][9]; // Column J index is 9 (0-indexed)
+        fieldMapping.forEach(field => {
+            let val = row[field.index];
+            let displayVal = (val !== undefined && val !== null && val !== '') ? val : '-';
+            tableHTML += `<tr><td style="font-weight: 600; width: 50%;">${field.label}</td><td>${displayVal}</td></tr>`;
+        });
 
-            if (timestamp) {
-                let rowDateStr = new Date(timestamp).toLocaleString('en-US', {
-                    month: 'numeric', day: 'numeric', year: '2-digit', 
-                    hour: 'numeric', minute: '2-digit', hour12: true
-                });
-
-                if (rowDateStr === targetStr) {
-                    tableHTML += `<tr><td>${colJData || ''}</td></tr>`;
-                    matchCount++;
-                }
-            }
-        }
         tableHTML += `</table></div>`;
-
-        displayDiv.innerHTML = matchCount > 0 ? tableHTML : '<p style="text-align:center; color:var(--text-muted);">No Matches Found</p>';
+        displayDiv.innerHTML = tableHTML;
     }
 
     // Form Submission Handling
