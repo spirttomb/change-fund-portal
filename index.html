@@ -48,6 +48,7 @@
             border-radius: 12px;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
             border: 12px solid #002a4f;         /* Rounded trim outline set to #002a4f */
+            box-sizing: border-box;
         }
 
         .tab-buttons {
@@ -66,6 +67,962 @@
             border-radius: 6px;
             border: 1px solid var(--border);
             background: var(--card-bg);
+            color: var(--text-main);
+            font-size: 1rem;
+            transition: all 0.2s;
+            margin-top: 0;
+            font-family: inherit;
+        }
+
+        .tab-buttons button.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .panel {
+            display: none;
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 0;
+            color: var(--text-dark); /* Main title to black */
+        }
+
+        h2 {
+            text-align: center;
+            margin-top: 0;
+            color: var(--text-main);
+        }
+
+        .form-section {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: var(--bg);             /* Bottom of the card is the main background (#003d73) */
+            border: 1px solid #001b35;
+            border-radius: 8px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3); /* Drop shadow for the cards */
+            box-sizing: border-box;
+        }
+
+        .form-section h3 {
+            margin: -20px -20px 15px -20px;    /* Pulls header to the card's outer edges */
+            padding: 12px 20px;
+            font-size: 1.1rem;
+            color: #ffffff;                    /* Category title text is white */
+            background: #002a4f;               /* Top header color */
+            border-top-left-radius: 7px;
+            border-top-right-radius: 7px;
+            font-family: 'CustomOTFFont', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-subtitle {
+            font-size: 0.8rem;
+            font-weight: normal;
+            color: var(--text-muted);
+        }
+
+        label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--text-main);           /* White text for readability on the dark blue card */
+            font-family: 'CustomOTFFont', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        /* Responsive Filter Grids */
+        .filter-grid-primary {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto auto;
+            gap: 15px;
+            align-items: end;
+        }
+
+        .filter-grid-secondary {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 15px;
+            align-items: end;
+        }
+
+        @media (max-width: 650px) {
+            .filter-grid-primary, .filter-grid-secondary {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        input, select {
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+            background-color: var(--inner-bg); /* Inner background to white */
+            color: var(--text-dark);            /* Text inside inputs to black */
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        /* Custom Decimal Wrapper for Bags and Tills (Fixed 150 prefix + editable 2 decimals) */
+        .custom-decimal-wrapper {
+            display: flex;
+            align-items: center;
+            background-color: var(--inner-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            box-sizing: border-box;
+        }
+
+        .custom-decimal-wrapper:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .custom-decimal-prefix {
+            padding: 10px 0 10px 10px;
+            color: var(--text-dark);
+            font-weight: 600;
+            font-size: 1rem;
+            user-select: none;
+            background-color: transparent;
+        }
+
+        .custom-decimal-input {
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+            padding: 10px 10px 10px 2px !important;
+            font-size: 1rem !important;
+            background: transparent !important;
+            color: var(--text-dark) !important;
+            width: 100%;
+        }
+
+        .conditional-group {
+            display: none;
+        }
+
+        .conditional-group.visible {
+            display: flex;
+        }
+
+        button.action-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 20px;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+
+        button.action-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button.action-btn:disabled {
+            background-color: #334155;
+            cursor: not-allowed;
+            color: var(--text-muted);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background-color: var(--inner-bg); /* Inner table background to white */
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: left;
+            color: var(--text-dark); /* Table data text to dark for readability on white background */
+        }
+
+        th {
+            background-color: #f1f5f9;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        #success-message {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .success-icon {
+            font-size: 3rem;
+            color: #10b981;
+            margin-bottom: 10px;
+        }
+
+        #form-error-message {
+            display: none;
+            background-color: #fee2e2;
+            border: 1px solid #ef4444;
+            color: #b91c1c;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Top Navigation Tabs -->
+    <div class="tab-buttons">
+        <button id="btn-submit" class="active" onclick="switchTab('submit')">New Log Entry</button>
+        <button id="btn-view" onclick="switchTab('view')">View Log</button>
+    </div>
+
+    <!-- PANEL 1: SUBMIT NEW ENTRY FORM -->
+    <div id="panel-submit" class="panel active">
+        <div id="form-container">
+            <h1>Change Fund Log</h1>
+            
+            <div id="form-error-message"></div>
+
+            <form id="change-fund-form">
+                <!-- Personnel -->
+                <div class="form-section">
+                    <h3>Employee Info</h3>
+                    <div class="form-group">
+                        <label>Name</label>
+                        <select name="entry.2093033292" id="employee-name" required>
+                            <option value="">Select your name...</option>
+                            <option value="Emma">Emma</option>
+                            <option value="Fawn">Fawn</option>
+                            <option value="Jaida">Jaida</option>
+                            <option value="Josh">Josh</option>
+                            <option value="Kendal">Kendal</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Top Drawer -->
+                <div class="form-section">
+                    <h3>Top Drawer <span class="section-subtitle">Enter The Value Amount</span></h3>
+                    <div class="grid">
+                        <div class="form-group"><label>500 Bundles</label><input type="number" step="any" name="entry.1517829846" class="mandatory-input"></div>
+                        <div class="form-group"><label>100 Bundles</label><input type="number" step="any" name="entry.1744081617" class="mandatory-input"></div>
+                        <div class="form-group"><label>Boxes of Quarters</label><input type="number" step="any" name="entry.898907270" class="mandatory-input"></div>
+                        <div class="form-group"><label>Boxes of Dimes</label><input type="number" step="any" name="entry.1372868115" class="mandatory-input"></div>
+                        <div class="form-group"><label>Boxes of Nickles</label><input type="number" step="any" name="entry.884010152" class="mandatory-input"></div>
+                    </div>
+                </div>
+
+                <!-- Coins -->
+                <div class="form-section">
+                    <h3>Coins <span class="section-subtitle">Enter The Value Amount</span></h3>
+                    <div class="grid">
+                        <div class="form-group"><label>Rolls of Quarters</label><input type="number" step="any" name="entry.521101649" class="mandatory-input"></div>
+                        <div class="form-group"><label>Rolls of Dimes</label><input type="number" step="any" name="entry.718207412" class="mandatory-input"></div>
+                        <div class="form-group"><label>Rolls of Nickles</label><input type="number" step="any" name="entry.890888806" class="mandatory-input"></div>
+                        <div class="form-group"><label>Pennies</label><input type="number" step="any" name="entry.1565754101" class="mandatory-input"></div>
+                    </div>
+                </div>
+
+                <!-- Cash -->
+                <div class="form-section">
+                    <h3>Cash <span class="section-subtitle">Enter The Value Amount</span></h3>
+                    <div class="grid">
+                        <div class="form-group"><label>Singles</label><input type="number" step="any" name="entry.252905748" class="mandatory-input"></div>
+                        <div class="form-group"><label>Fives</label><input type="number" step="any" name="entry.1524898992" class="mandatory-input"></div>
+                        <div class="form-group"><label>Large Bills</label><input type="number" step="any" name="entry.989973404" class="mandatory-input"></div>
+                    </div>
+                </div>
+
+                <!-- Bags -->
+                <div class="form-section">
+                    <h3>Bags</h3>
+                    <div class="grid">
+                        <div class="form-group">
+                            <label>Bag #1</label>
+                            <div class="custom-decimal-wrapper">
+                                <span class="custom-decimal-prefix">150.</span>
+                                <input type="text" maxlength="2" inputmode="numeric" placeholder="00" class="custom-decimal-input" value="00">
+                                <input type="hidden" name="entry.557609349" class="custom-decimal-hidden mandatory-input" value="150.00">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Bag #2</label>
+                            <div class="custom-decimal-wrapper">
+                                <span class="custom-decimal-prefix">150.</span>
+                                <input type="text" maxlength="2" inputmode="numeric" placeholder="00" class="custom-decimal-input" value="00">
+                                <input type="hidden" name="entry.874061341" class="custom-decimal-hidden mandatory-input" value="150.00">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Bag #3</label>
+                            <div class="custom-decimal-wrapper">
+                                <span class="custom-decimal-prefix">150.</span>
+                                <input type="text" maxlength="2" inputmode="numeric" placeholder="00" class="custom-decimal-input" value="00">
+                                <input type="hidden" name="entry.1215915283" class="custom-decimal-hidden mandatory-input" value="150.00">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Bag #4</label>
+                            <div class="custom-decimal-wrapper">
+                                <span class="custom-decimal-prefix">150.</span>
+                                <input type="text" maxlength="2" inputmode="numeric" placeholder="00" class="custom-decimal-input" value="00">
+                                <input type="hidden" name="entry.2066716551" class="custom-decimal-hidden mandatory-input" value="150.00">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Bag #5</label>
+                            <div class="custom-decimal-wrapper">
+                                <span class="custom-decimal-prefix">150.</span>
+                                <input type="text" maxlength="2" inputmode="numeric" placeholder="00" class="custom-decimal-input" value="00">
+                                <input type="hidden" name="entry.352372494" class="custom-decimal-hidden mandatory-input" value="150.00">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tills -->
+                <div class="form-section">
+                    <h3>Tills</h3>
+                    <div class="grid">
+                        <div class="form-group">
+                            <label>Till #1</label>
+                            <div class="custom-decimal-wrapper">
+                                <span class="custom-decimal-prefix">150.</span>
+                                <input type="text" maxlength="2" inputmode="numeric" placeholder="00" class="custom-decimal-input" value="00">
+                                <input type="hidden" name="entry.1689010264" class="custom-decimal-hidden mandatory-input" value="150.00">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Till #2</label>
+                            <div class="custom-decimal-wrapper">
+                                <span class="custom-decimal-prefix">150.</span>
+                                <input type="text" maxlength="2" inputmode="numeric" placeholder="00" class="custom-decimal-input" value="00">
+                                <input type="hidden" name="entry.406607956" class="custom-decimal-hidden mandatory-input" value="150.00">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Till #3</label>
+                            <div class="custom-decimal-wrapper">
+                                <span class="custom-decimal-prefix">150.</span>
+                                <input type="text" maxlength="2" inputmode="numeric" placeholder="00" class="custom-decimal-input" value="00">
+                                <input type="hidden" name="entry.2100128588" class="custom-decimal-hidden mandatory-input" value="150.00">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Till #4</label>
+                            <div class="custom-decimal-wrapper">
+                                <span class="custom-decimal-prefix">150.</span>
+                                <input type="text" maxlength="2" inputmode="numeric" placeholder="00" class="custom-decimal-input" value="00">
+                                <input type="hidden" name="entry.510240632" class="custom-decimal-hidden mandatory-input" value="150.00">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Till #5</label>
+                            <div class="custom-decimal-wrapper">
+                                <span class="custom-decimal-prefix">150.</span>
+                                <input type="text" maxlength="2" inputmode="numeric" placeholder="00" class="custom-decimal-input" value="00">
+                                <input type="hidden" name="entry.1241719748" class="custom-decimal-hidden mandatory-input" value="150.00">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="form-section">
+                    <h3>Stats</h3>
+                    <div style="display: flex; flex-direction: column; gap: 15px; width: 100%; box-sizing: border-box;">
+                        <div style="display: grid; grid-template-columns: 210px minmax(0, 1fr); align-items: center; gap: 20px; width: 100%; box-sizing: border-box;">
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal; font-size: 0.8rem; white-space: nowrap; margin-bottom: 0;">
+                                <input type="checkbox" id="check-received" onchange="toggleStatField('received')"> Change Fund Received
+                            </label>
+                            <div class="form-group conditional-group" id="group-received" style="width: 100%; box-sizing: border-box;">
+                                <input type="number" step="any" name="entry.1389957960" id="input-received" placeholder="Received amount" style="width: 100%; box-sizing: border-box;">
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 210px minmax(0, 1fr); align-items: center; gap: 20px; width: 100%; box-sizing: border-box;">
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal; font-size: 0.8rem; white-space: nowrap; margin-bottom: 0;">
+                                <input type="checkbox" id="check-deposited" onchange="toggleStatField('deposited')"> Change Fund Deposited
+                            </label>
+                            <div class="form-group conditional-group" id="group-deposited" style="width: 100%; box-sizing: border-box;">
+                                <input type="number" step="any" name="entry.423453157" id="input-deposited" placeholder="Deposited amount" style="width: 100%; box-sizing: border-box;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" id="submit-btn" class="action-btn">Submit Entry</button>
+            </form>
+        </div>
+
+        <!-- Success Message Container -->
+        <div id="success-message">
+            <div class="success-icon">✓</div>
+            <h2>Successfully Logged!</h2>
+            <p>Your change fund counts have been recorded.</p>
+            <button onclick="resetForm()" class="action-btn" style="width: auto; padding: 10px 20px; background-color: var(--card-bg); color: var(--text-main);">Submit Another Log Entry</button>
+        </div>
+    </div>
+
+    <!-- PANEL 2: VIEW RECORDS UI -->
+    <div id="panel-view" class="panel">
+        <h1>Log Viewer</h1>
+        
+        <!-- Filter Controls & Primary Dropdown -->
+        <div class="form-section">
+            <h3>Filter Primary Entry</h3>
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <div class="filter-grid-primary">
+                    <div class="form-group">
+                        <label>Filter by Name</label>
+                        <select id="filter-name" onchange="populateDropdowns()">
+                            <option value="">All Names</option>
+                            <option value="Emma">Emma</option>
+                            <option value="Fawn">Fawn</option>
+                            <option value="Jaida">Jaida</option>
+                            <option value="Josh">Josh</option>
+                            <option value="Kendal">Kendal</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Filter by Date</label>
+                        <input type="date" id="filter-date" onchange="populateDropdowns()">
+                    </div>
+                    <div class="form-group" style="align-self: end;">
+                        <button type="button" class="action-btn" style="margin-top:0; padding: 10px 15px; background-color: var(--card-bg); color: var(--text-main);" onclick="clearDropdownFilters()">Reset</button>
+                    </div>
+                    <div class="form-group" style="align-self: end;">
+                        <button type="button" class="action-btn" id="compare-toggle-btn" style="margin-top:0; padding: 10px 15px; background-color: var(--card-bg); color: var(--text-main);" onclick="toggleCompareMode()">Compare</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label id="label-record-dropdown">Select Entry</label>
+                    <select id="record-dropdown" onchange="displayRecordData()">
+                        <option value="">Loading entry...</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Controls & Comparison Dropdown (Hidden by Default) -->
+        <div class="form-section" id="compare-section" style="display: none;">
+            <h3>Filter Comparison Entry</h3>
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <div class="filter-grid-secondary">
+                    <div class="form-group">
+                        <label>Filter by Name</label>
+                        <select id="filter-name-2" onchange="populateDropdowns()">
+                            <option value="">All Names</option>
+                            <option value="Emma">Emma</option>
+                            <option value="Fawn">Fawn</option>
+                            <option value="Jaida">Jaida</option>
+                            <option value="Josh">Josh</option>
+                            <option value="Kendal">Kendal</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Filter by Date</label>
+                        <input type="date" id="filter-date-2" onchange="populateDropdowns()">
+                    </div>
+                    <div class="form-group" style="align-self: end;">
+                        <button type="button" class="action-btn" style="margin-top:0; padding: 10px 15px; background-color: var(--card-bg); color: var(--text-main);" onclick="clearCompareFilters()">Reset</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Select Comparison Entry</label>
+                    <select id="record-dropdown-2" onchange="displayRecordData()">
+                        <option value="">Loading entry...</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div id="data-display">
+            <!-- Categorized breakdown / comparison will appear here -->
+        </div>
+    </div>
+</div>
+
+<script>
+    const GOOGLE_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLScZ4ryPqOEApRXtqxg3Bu0_4Prijl6wYOcfOqmPprP9lhUWeA/formResponse';
+    const SHEET_ID = '1wziv2JVhSkdABUvgbyOsujHL_cNCTZuvQziu7MX98F8';
+
+    let globalSheetData = [];
+    let isComparing = false;
+
+    // Initialize custom decimal inputs sync
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.custom-decimal-wrapper').forEach(wrapper => {
+            const textInput = wrapper.querySelector('.custom-decimal-input');
+            const hiddenInput = wrapper.querySelector('.custom-decimal-hidden');
+            
+            textInput.addEventListener('input', () => {
+                let val = textInput.value.replace(/\D/g, '').slice(0, 2);
+                textInput.value = val;
+                if (val === '') {
+                    hiddenInput.value = '150.00';
+                } else if (val.length === 1) {
+                    hiddenInput.value = `150.${val}0`;
+                } else {
+                    hiddenInput.value = `150.${val}`;
+                }
+            });
+        });
+    });
+
+    // Restrict standard number inputs to only numbers
+    document.addEventListener('keypress', function(e) {
+        if (e.target.tagName === 'INPUT' && e.target.type === 'number') {
+            const charCode = e.which ? e.which : e.keyCode;
+            if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode !== 46 && charCode !== 45) {
+                e.preventDefault();
+            }
+        }
+    });
+
+    function toggleStatField(field) {
+        const checkbox = document.getElementById(`check-${field}`);
+        const group = document.getElementById(`group-${field}`);
+        const input = document.getElementById(`input-${field}`);
+        if (checkbox.checked) {
+            group.classList.add('visible');
+        } else {
+            group.classList.remove('visible');
+            input.value = '';
+        }
+    }
+
+    function switchTab(tab) {
+        document.getElementById('panel-submit').classList.toggle('active', tab === 'submit');
+        document.getElementById('panel-view').classList.toggle('active', tab === 'view');
+        document.getElementById('btn-submit').classList.toggle('active', tab === 'submit');
+        document.getElementById('btn-view').classList.toggle('active', tab === 'view');
+        
+        if (tab === 'view' && globalSheetData.length === 0) {
+            fetchSheetData();
+        }
+    }
+
+    // Fetch data directly using Google's Visualization API (with Date parsing fix)
+    async function fetchSheetData() {
+        try {
+            const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=Data&tqx=out:json`;
+            const response = await fetch(url);
+            const text = await response.text();
+            
+            const jsonText = text.substring(47, text.length - 2);
+            const json = JSON.parse(jsonText);
+
+            const rows = [];
+            const headers = json.table.cols.map(col => col.label || '');
+            rows.push(headers);
+
+            json.table.rows.forEach(r => {
+                const rowData = r.c.map(cell => {
+                    if (!cell) return '';
+                    if (cell.v && typeof cell.v === 'string' && cell.v.startsWith('Date(')) {
+                        const parts = cell.v.match(/\d+/g).map(Number);
+                        return new Date(parts[0], parts[1], parts[2], parts[3] || 0, parts[4] || 0, parts[5] || 0);
+                    }
+                    return cell.v !== null ? cell.v : (cell.f || '');
+                });
+                rows.push(rowData);
+            });
+
+            globalSheetData = rows;
+            populateDropdowns();
+        } catch (error) {
+            console.error('Error fetching sheet data:', error);
+            document.getElementById('record-dropdown').innerHTML = '<option>Error loading data</option>';
+            document.getElementById('record-dropdown-2').innerHTML = '<option>Error loading data</option>';
+        }
+    }
+    
+    // Toggle Compare Mode UI and state
+    function toggleCompareMode() {
+        isComparing = !isComparing;
+        const compareSection = document.getElementById('compare-section');
+        const toggleBtn = document.getElementById('compare-toggle-btn');
+        const labelRecordDropdown = document.getElementById('label-record-dropdown');
+
+        if (isComparing) {
+            compareSection.style.display = 'block';
+            toggleBtn.textContent = 'Exit Compare';
+            labelRecordDropdown.textContent = 'Select Primary Entry';
+        } else {
+            compareSection.style.display = 'none';
+            toggleBtn.textContent = 'Compare';
+            labelRecordDropdown.textContent = 'Select Entry';
+            document.getElementById('filter-name-2').value = '';
+            document.getElementById('filter-date-2').value = '';
+            document.getElementById('record-dropdown-2').value = '';
+        }
+        populateDropdowns();
+        displayRecordData();
+    }
+
+    // Filter and populate both dropdowns
+    function populateDropdowns() {
+        populateSingleDropdown('record-dropdown', 'filter-name', 'filter-date', isComparing ? 'Select a primary entry...' : 'Select an entry...');
+        if (isComparing) {
+            populateSingleDropdown('record-dropdown-2', 'filter-name-2', 'filter-date-2', 'Select a comparison entry...');
+        }
+    }
+
+    function populateSingleDropdown(dropdownId, nameFilterId, dateFilterId, defaultText) {
+        const dropdown = document.getElementById(dropdownId);
+        const selectedNameFilter = document.getElementById(nameFilterId).value.toLowerCase();
+        const selectedDateFilter = document.getElementById(dateFilterId).value; // YYYY-MM-DD
+        
+        const currentSelection = dropdown.value;
+        dropdown.innerHTML = `<option value="">${defaultText}</option>`;
+        
+        if (globalSheetData.length <= 1) return;
+
+        for (let i = 1; i < globalSheetData.length; i++) {
+            let timestamp = globalSheetData[i][0]; // Column A
+            let name = globalSheetData[i][1];        // Column B
+
+            if (timestamp && name) {
+                let rowDate = new Date(timestamp);
+                if (isNaN(rowDate)) continue;
+
+                let year = rowDate.getFullYear();
+                let month = String(rowDate.getMonth() + 1).padStart(2, '0');
+                let day = String(rowDate.getDate()).padStart(2, '0');
+                let rowDateYYYYMMDD = `${year}-${month}-${day}`;
+
+                let nameMatch = !selectedNameFilter || name.toLowerCase() === selectedNameFilter;
+                let dateMatch = !selectedDateFilter || rowDateYYYYMMDD === selectedDateFilter;
+
+                if (nameMatch && dateMatch) {
+                    let formattedDate = rowDate.toLocaleString('en-US', {
+                        month: 'numeric', day: 'numeric', year: '2-digit', 
+                        hour: 'numeric', minute: '2-digit', hour12: true
+                    });
+                    let properName = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+                    
+                    let label = `${formattedDate} - ${properName}`;
+                    
+                    let opt = document.createElement('option');
+                    opt.value = i;
+                    opt.textContent = label;
+                    dropdown.appendChild(opt);
+                }
+            }
+        }
+        dropdown.value = currentSelection;
+    }
+
+    // Reset Dropdown Filters for Primary
+    function clearDropdownFilters() {
+        document.getElementById('filter-name').value = '';
+        document.getElementById('filter-date').value = '';
+        populateDropdowns();
+        displayRecordData();
+    }
+
+    // Reset Dropdown Filters for Comparison
+    function clearCompareFilters() {
+        document.getElementById('filter-name-2').value = '';
+        document.getElementById('filter-date-2').value = '';
+        populateDropdowns();
+        displayRecordData();
+    }
+
+    function parseNum(val) {
+        const num = parseFloat(val);
+        return isNaN(num) ? 0 : num;
+    }
+
+    // Display record data or compare two records with perfectly aligned comparison grid and calculations
+    function displayRecordData() {
+        const rowIndex1 = document.getElementById('record-dropdown').value;
+        const rowIndex2 = isComparing ? document.getElementById('record-dropdown-2').value : null;
+        const displayDiv = document.getElementById('data-display');
+        displayDiv.innerHTML = '';
+
+        if (!rowIndex1) return;
+
+        const row1 = globalSheetData[rowIndex1];
+        const row2 = rowIndex2 ? globalSheetData[rowIndex2] : null;
+        if (!row1) return;
+
+        // Helper to format values and determine mismatch coloring with aligned grid layout
+        function getCellContent(index, customColor = null) {
+            let val1 = row1[index];
+            let disp1 = (val1 !== undefined && val1 !== null && val1 !== '') ? val1 : '-';
+
+            if (!row2) {
+                let colorStyle = customColor ? `color: ${customColor};` : '';
+                return `<td><span style="${colorStyle}">${disp1}</span></td>`;
+            } else {
+                let val2 = row2[index];
+                let disp2 = (val2 !== undefined && val2 !== null && val2 !== '') ? val2 : '-';
+                let isDiff = String(val1).trim() !== String(val2).trim();
+                let diffStyle = isDiff ? `color: var(--diff-color); font-weight: bold;` : (customColor ? `color: ${customColor};` : '');
+                
+                return `<td><div style="display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 35px; width: 100%;"><span style="text-align: right; ${diffStyle}">${disp1}</span><span style="color: var(--text-muted); font-size: 0.85rem; text-align: center;">vs</span><span style="text-align: left; ${diffStyle}">${disp2}</span></div></td>`;
+            }
+        }
+
+        // Category 1: Top Drawer
+        const topDrawerFields = [
+            { label: "500 Bundles", index: 2 },
+            { label: "100 Bundles", index: 3 },
+            { label: "Boxes of Quarters", index: 7 },
+            { label: "Boxes of Dimes", index: 8 },
+            { label: "Boxes of Nickles", index: 9 }
+        ];
+        let topDrawerTotal1 = 0;
+        let topDrawerHTML = `<div class="form-section"><h3>Top Drawer</h3><table>`;
+        topDrawerFields.forEach(field => {
+            topDrawerTotal1 += parseNum(row1[field.index]);
+            topDrawerHTML += `<tr><td style="font-weight: 600; width: 35%;">${field.label}</td>${getCellContent(field.index)}</tr>`;
+        });
+        topDrawerHTML += `</table></div>`;
+
+        // Category 2: Coins
+        const coinFields = [
+            { label: "Rolls of Quarters", index: 10 },
+            { label: "Rolls of Dimes", index: 11 },
+            { label: "Rolls of Nickles", index: 12 },
+            { label: "Pennies", index: 13 }
+        ];
+        let coinsTotal1 = 0;
+        let coinsHTML = `<div class="form-section"><h3>Coins</h3><table>`;
+        coinFields.forEach(field => {
+            coinsTotal1 += parseNum(row1[field.index]);
+            coinsHTML += `<tr><td style="font-weight: 600; width: 35%;">${field.label}</td>${getCellContent(field.index)}</tr>`;
+        });
+        coinsHTML += `</table></div>`;
+
+        // Category 3: Cash
+        const cashFields = [
+            { label: "Singles", index: 6 },
+            { label: "Fives", index: 5 },
+            { label: "Large Bills", index: 4 }
+        ];
+        let cashTotal1 = 0;
+        let cashHTML = `<div class="form-section"><h3>Cash</h3><table>`;
+        cashFields.forEach(field => {
+            cashTotal1 += parseNum(row1[field.index]);
+            cashHTML += `<tr><td style="font-weight: 600; width: 35%;">${field.label}</td>${getCellContent(field.index)}</tr>`;
+        });
+        cashHTML += `</table></div>`;
+
+        // Category 4: Bags
+        const bagFields = [
+            { label: "Bag #1", index: 14 },
+            { label: "Bag #2", index: 15 },
+            { label: "Bag #3", index: 16 },
+            { label: "Bag #4", index: 17 },
+            { label: "Bag #5", index: 18 }
+        ];
+        let bagsTotal1 = 0;
+        let bagsHTML = `<div class="form-section"><h3>Bags</h3><table>`;
+        bagFields.forEach(field => {
+            bagsTotal1 += parseNum(row1[field.index]);
+            bagsHTML += `<tr><td style="font-weight: 600; width: 35%;">${field.label}</td>${getCellContent(field.index)}</tr>`;
+        });
+        
+        let bagsTotal2 = row2 ? bagFields.reduce((acc, f) => acc + parseNum(row2[f.index]), 0) : 0;
+        bagsHTML += getStatRowHTML("Total Bags", bagsTotal1.toFixed(2), bagsTotal2.toFixed(2), row2);
+        bagsHTML += `</table></div>`;
+
+        // Category 5: Tills
+        const tillFields = [
+            { label: "Till #1", index: 19 },
+            { label: "Till #2", index: 20 },
+            { label: "Till #3", index: 21 },
+            { label: "Till #4", index: 22 },
+            { label: "Till #5", index: 23 }
+        ];
+        let tillsTotal1 = 0;
+        let tillsHTML = `<div class="form-section"><h3>Tills</h3><table>`;
+        tillFields.forEach(field => {
+            tillsTotal1 += parseNum(row1[field.index]);
+            tillsHTML += `<tr><td style="font-weight: 600; width: 35%;">${field.label}</td>${getCellContent(field.index)}</tr>`;
+        });
+
+        let tillsTotal2 = row2 ? tillFields.reduce((acc, f) => acc + parseNum(row2[f.index]), 0) : 0;
+        tillsHTML += getStatRowHTML("Total Tills", tillsTotal1.toFixed(2), tillsTotal2.toFixed(2), row2);
+        tillsHTML += `</table></div>`;
+
+        // Category 6: Stats
+        const receivedVal1 = parseNum(row1[24]);
+        const depositedVal1 = parseNum(row1[25]);
+        const sumOfCounts1 = topDrawerTotal1 + coinsTotal1 + cashTotal1;
+        const grandTotal1 = sumOfCounts1 + receivedVal1 - depositedVal1;
+        const totalBeforeReceived1 = sumOfCounts1;
+        const totalWithTills1 = sumOfCounts1 + 1500;
+
+        let grandTotal2 = 0, totalBeforeReceived2 = 0, totalWithTills2 = 0;
+        if (row2) {
+            const topDrawerTotal2 = topDrawerFields.reduce((acc, f) => acc + parseNum(row2[f.index]), 0);
+            const coinsTotal2 = coinFields.reduce((acc, f) => acc + parseNum(row2[f.index]), 0);
+            const cashTotal2 = cashFields.reduce((acc, f) => acc + parseNum(row2[f.index]), 0);
+            const receivedVal2 = parseNum(row2[24]);
+            const depositedVal2 = parseNum(row2[25]);
+            const sumOfCounts2 = topDrawerTotal2 + coinsTotal2 + cashTotal2;
+            grandTotal2 = sumOfCounts2 + receivedVal2 - depositedVal2;
+            totalBeforeReceived2 = sumOfCounts2;
+            totalWithTills2 = sumOfCounts2 + 1500;
+        }
+
+        let statsHTML = `<div class="form-section"><h3>Stats</h3><table>`;
+        statsHTML += `<tr><td style="font-weight: 600; width: 35%;">Received</td>${getCellContent(24)}</tr>`;
+        statsHTML += `<tr><td style="font-weight: 600; width: 35%;">Deposited</td>${getCellContent(25)}</tr>`;
+        
+        statsHTML += getStatRowHTML("Total", grandTotal1.toFixed(2), grandTotal2.toFixed(2), row2);
+        statsHTML += getStatRowHTML("Total Before Received & Deposit", totalBeforeReceived1.toFixed(2), totalBeforeReceived2.toFixed(2), row2);
+        statsHTML += getStatRowHTML("Total With Tills", totalWithTills1.toFixed(2), totalWithTills2.toFixed(2), row2);
+        statsHTML += `</table></div>`;
+
+        displayDiv.innerHTML = topDrawerHTML + coinsHTML + cashHTML + bagsHTML + tillsHTML + statsHTML;
+    }
+
+    function getStatRowHTML(label, val1, val2, hasRow2) {
+        if (!hasRow2) {
+            return `<tr><td style="font-weight: 700; width: 35%; color: var(--primary);">${label}</td><td style="font-weight: 700; color: var(--primary);">${val1}</td></tr>`;
+        } else {
+            let isDiff = val1 !== val2;
+            let diffStyle = isDiff ? `color: var(--diff-color); font-weight: bold;` : `color: var(--primary); font-weight: 700;`;
+            return `<tr><td style="font-weight: 700; width: 35%; color: var(--primary);">${label}</td><td><div style="display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 35px; width: 100%;"><span style="text-align: right; ${diffStyle}">${val1}</span><span style="color: var(--text-muted); font-size: 0.85rem; text-align: center;">vs</span><span style="text-align: left; ${diffStyle}">${val2}</span></div></td></tr>`;
+        }
+    }
+
+    // Form Submission Handling with Custom Validation
+    const form = document.getElementById('change-fund-form');
+    const submitBtn = document.getElementById('submit-btn');
+    const formContainer = document.getElementById('form-container');
+    const successMessage = document.getElementById('success-message');
+    const errorDiv = document.getElementById('form-error-message');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errorDiv.style.display = 'none';
+        errorDiv.innerHTML = '';
+
+        let errors = [];
+
+        // 1. Validate Employee Name
+        const nameSelect = document.getElementById('employee-name');
+        if (!nameSelect.value) {
+            errors.push("Please select an employee name.");
+        }
+
+        // 2. Validate all mandatory number inputs
+        const mandatoryInputs = form.querySelectorAll('.mandatory-input');
+        mandatoryInputs.forEach(input => {
+            if (input.value === '' || isNaN(input.value)) {
+                const label = input.closest('.form-group').querySelector('label').textContent;
+                errors.push(`The field "${label}" is mandatory and must contain a valid number.`);
+            }
+        });
+
+        // 3. Validate optional received/deposited fields if their checkboxes are checked and values are entered
+        const receivedCheck = document.getElementById('check-received');
+        const receivedInput = document.getElementById('input-received');
+        if (receivedCheck.checked && receivedInput.value !== '' && isNaN(receivedInput.value)) {
+            errors.push('The "Received" field must be a valid number if provided.');
+        }
+
+        const depositedCheck = document.getElementById('check-deposited');
+        const depositedInput = document.getElementById('input-deposited');
+        if (depositedCheck.checked && depositedInput.value !== '' && isNaN(depositedInput.value)) {
+            errors.push('The "Deposited" field must be a valid number if provided.');
+        }
+
+        // If any error exists, prevent submission and display reasons
+        if (errors.length > 0) {
+            errorDiv.innerHTML = '<strong>Please fix the following issues before submitting:</strong><ul style="margin: 5px 0 0 20px; padding: 0;">' + errors.map(err => `<li>${err}</li>`).join('') + '</ul>';
+            errorDiv.style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+        }
+
+        submitBtn.textContent = 'Submitting...';
+        submitBtn.disabled = true;
+
+        const formData = new FormData(form);
+
+        try {
+            await fetch(GOOGLE_FORM_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: formData
+            });
+
+            formContainer.style.display = 'none';
+            successMessage.style.display = 'block';
+            globalSheetData = []; // Clear cache so the view tab re-fetches latest updates
+        } catch (error) {
+            alert('There was an error submitting the form. Please check your connection.');
+            console.error('Submission failed:', error);
+        } finally {
+            submitBtn.textContent = 'Submit Entry';
+            submitBtn.disabled = false;
+        }
+    });
+
+    function resetForm() {
+        form.reset();
+        // Reset custom decimal fields for bags and tills
+        document.querySelectorAll('.custom-decimal-wrapper').forEach(wrapper => {
+            const textInput = wrapper.querySelector('.custom-decimal-input');
+            const hiddenInput = wrapper.querySelector('.custom-decimal-hidden');
+            textInput.value = '00';
+            hiddenInput.value = '150.00';
+        });
+        document.getElementById('group-received').classList.remove('visible');
+        document.getElementById('group-deposited').classList.remove('visible');
+        errorDiv.style.display = 'none';
+        successMessage.style.display = 'none';
+        formContainer.style.display = 'block';
+        window.scrollTo(0, 0);
+    }
+</script>
+
+</body>
+</html>
             color: var(--text-main);
             font-size: 1rem;
             transition: all 0.2s;
