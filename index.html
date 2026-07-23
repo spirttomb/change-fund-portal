@@ -7,18 +7,22 @@
     <style>
         /* Define your custom OTF font here */
         @font-face {
-    font-family: 'CustomOTFFont';
-    src: url('apercu_regular_pro.otf') format('opentype');
-}
+            font-family: 'CustomOTFFont';
+            src: url('YourFontName.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
 
         :root {
             --primary: #3b82f6;
             --primary-hover: #2563eb;
-            --bg: #0b132b;          /* Deep navy background */
-            --card-bg: #1c2541;     /* Lighter navy container */
-            --border: #3a506b;      /* Muted border */
-            --text-main: #ffffff;   /* Pure white text */
-            --text-muted: #94a3b8;  /* Muted grey-blue text */
+            --bg: #003d73;          /* Background */
+            --card-bg: #002a4f;     /* Trim / category bubbles */
+            --inner-bg: #ffffff;    /* Inner background */
+            --border: #001b35;
+            --text-main: #ffffff;   /* White text */
+            --text-dark: #000000;   /* Black text */
+            --text-muted: #cbd5e1;
         }
 
         body {
@@ -55,7 +59,7 @@
             cursor: pointer;
             border-radius: 6px;
             border: 1px solid var(--border);
-            background: #162238;
+            background: var(--card-bg);
             color: var(--text-main);
             font-size: 1rem;
             transition: all 0.2s;
@@ -76,7 +80,13 @@
             display: block;
         }
 
-        h1, h2 {
+        h1 {
+            text-align: center;
+            margin-top: 0;
+            color: var(--text-dark); /* Main title to black */
+        }
+
+        h2 {
             text-align: center;
             margin-top: 0;
             color: var(--text-main);
@@ -85,7 +95,7 @@
         .form-section {
             margin-bottom: 25px;
             padding: 20px;
-            background: #162238;
+            background: var(--card-bg);
             border: 1px solid var(--border);
             border-radius: 8px;
         }
@@ -93,7 +103,7 @@
         .form-section h3 {
             margin-top: 0;
             font-size: 1.1rem;
-            color: var(--primary);
+            color: var(--text-main); /* Category title text to white */
             margin-bottom: 15px;
         }
 
@@ -121,8 +131,8 @@
             border-radius: 6px;
             font-size: 1rem;
             transition: border-color 0.2s;
-            background-color: #0b132b;
-            color: var(--text-main);
+            background-color: var(--inner-bg); /* Inner background to white */
+            color: var(--text-dark);            /* Text inside inputs to black */
             font-family: inherit;
         }
 
@@ -161,18 +171,22 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 15px;
+            background-color: var(--inner-bg); /* Inner table background to white */
+            border-radius: 6px;
+            overflow: hidden;
         }
 
         th, td {
             padding: 12px;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid #e2e8f0;
             text-align: left;
-            color: var(--text-main);
+            color: var(--text-dark); /* Table data text to dark for readability on white background */
         }
 
         th {
-            background-color: #162238;
+            background-color: #f1f5f9;
             font-weight: 600;
+            color: var(--text-dark);
         }
 
         #success-message {
@@ -294,7 +308,7 @@
             <div class="success-icon">✓</div>
             <h2>Successfully Logged!</h2>
             <p>Your change fund counts have been recorded.</p>
-            <button onclick="resetForm()" class="action-btn" style="width: auto; padding: 10px 20px; background-color: var(--text-muted);">Submit Another Log</button>
+            <button onclick="resetForm()" class="action-btn" style="width: auto; padding: 10px 20px; background-color: var(--card-bg); color: var(--text-main);">Submit Another Log</button>
         </div>
     </div>
 
@@ -322,7 +336,7 @@
                     <input type="date" id="filter-date" onchange="populateDropdown()">
                 </div>
                 <div class="form-group">
-                    <button type="button" class="action-btn" style="margin-top:0; padding: 10px 15px; background-color: var(--text-muted);" onclick="clearDropdownFilters()">Reset</button>
+                    <button type="button" class="action-btn" style="margin-top:0; padding: 10px 15px; background-color: var(--card-bg); color: var(--text-main);" onclick="clearDropdownFilters()">Reset</button>
                 </div>
             </div>
         </div>
