@@ -134,6 +134,27 @@
             gap: 15px;
         }
 
+        /* Responsive Filter Grids */
+        .filter-grid-primary {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto auto;
+            gap: 15px;
+            align-items: end;
+        }
+
+        .filter-grid-secondary {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 15px;
+            align-items: end;
+        }
+
+        @media (max-width: 650px) {
+            .filter-grid-primary, .filter-grid-secondary {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
         .form-group {
             display: flex;
             flex-direction: column;
@@ -332,7 +353,7 @@
         <!-- Filter Controls for Entry 1 -->
         <div class="form-section">
             <h3>Filter Primary Entry</h3>
-            <div class="grid" style="grid-template-columns: 1fr 1fr auto auto; align-items: end;">
+            <div class="filter-grid-primary">
                 <div class="form-group">
                     <label>Filter by Name</label>
                     <select id="filter-name" onchange="populateDropdowns()">
@@ -360,7 +381,7 @@
         <!-- Filter Controls for Entry 2 (Hidden by Default) -->
         <div class="form-section" id="compare-section" style="display: none;">
             <h3>Filter Comparison Entry</h3>
-            <div class="grid" style="grid-template-columns: 1fr 1fr auto; align-items: end;">
+            <div class="filter-grid-secondary">
                 <div class="form-group">
                     <label>Filter by Name</label>
                     <select id="filter-name-2" onchange="populateDropdowns()">
@@ -659,7 +680,6 @@
             bagsHTML += `<tr><td style="font-weight: 600; width: 35%;">${field.label}</td>${getCellContent(field.index)}</tr>`;
         });
         
-        // Total Bags row handling for comparison
         if (!row2) {
             bagsHTML += `<tr><td style="font-weight: 700; width: 35%; color: var(--primary);">Total Bags</td><td style="font-weight: 700; color: var(--primary);">${bagsTotal1}</td></tr>`;
         } else {
