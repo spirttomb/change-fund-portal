@@ -323,23 +323,30 @@
     }
 
     // Fetch data directly using Google's Visualization API (Bypasses Apps Script CORS blocks)
+   // Fetch data directly using Google's Visualization API (with Date parsing fix)
     async function fetchSheetData() {
         try {
             const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=Data&tqx=out:json`;
             const response = await fetch(url);
             const text = await response.text();
             
-            // Google wraps its JSON response in a callback function. Strip it out:
             const jsonText = text.substring(47, text.length - 2);
             const json = JSON.parse(jsonText);
 
-            // Transform Google's table format into a clean 2D array
             const rows = [];
             const headers = json.table.cols.map(col => col.label || '');
             rows.push(headers);
 
             json.table.rows.forEach(r => {
-                const rowData = r.c.map(cell => (cell && cell.v !== null) ? cell.v : '');
+                const rowData = r.c.map(cell => {
+                    if (!cell) return '';
+                    // Fix for Google Visualization API date string format: "Date(YYYY,MM,DD,HH,mm,ss)"
+                    if (cell.v && typeof cell.v === 'string' && cell.v.startsWith('Date(')) {
+                        const parts = cell.v.match(/\d+/g).map(Number);
+                        return new Date(parts[0], parts[1], parts[2], parts[3] || 0, parts[4] || 0, parts[5] || 0);
+                    }
+                    return cell.v !== null ? cell.v : (cell.f || '');
+                });
                 rows.push(rowData);
             });
 
@@ -350,7 +357,7 @@
             document.getElementById('record-dropdown').innerHTML = '<option>Error loading data</option>';
         }
     }
-
+    
     // Replicate UNIQUE(FILTER(...)) logic for the dropdown
     function populateDropdown() {
         const dropdown = document.getElementById('record-dropdown');
