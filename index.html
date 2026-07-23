@@ -324,7 +324,7 @@
         </div>
 
         <div id="data-display">
-            <!-- Full detailed breakdown will appear here -->
+            <!-- Categorized breakdown will appear here -->
         </div>
     </div>
 </div>
@@ -432,7 +432,12 @@
         populateDropdown();
     }
 
-    // Display the full record details in the correct requested order
+    function parseNum(val) {
+        const num = parseFloat(val);
+        return isNaN(num) ? 0 : num;
+    }
+
+    // Display the record details grouped by category with calculated totals
     function displayRecordData() {
         const rowIndex = document.getElementById('record-dropdown').value;
         const displayDiv = document.getElementById('data-display');
@@ -443,43 +448,113 @@
         const row = globalSheetData[rowIndex];
         if (!row) return;
 
-        let tableHTML = `<div class="form-section"><h3>Submission Details</h3><table>`;
-        
-        const fieldMapping = [
+        // Category 1: Top Drawer (500 Bundles, 100 Bundles, Boxes of Quarters, Boxes of Dimes, Boxes of Nickles)
+        const topDrawerFields = [
             { label: "500 Bundles", index: 2 },
             { label: "100 Bundles", index: 3 },
             { label: "Boxes of Quarters", index: 7 },
             { label: "Boxes of Dimes", index: 8 },
-            { label: "Boxes of Nickles", index: 9 },
+            { label: "Boxes of Nickles", index: 9 }
+        ];
+        let topDrawerTotal = 0;
+        let topDrawerHTML = `<div class="form-section"><h3>Top Drawer</h3><table>`;
+        topDrawerFields.forEach(field => {
+            let val = row[field.index];
+            topDrawerTotal += parseNum(val);
+            let displayVal = (val !== undefined && val !== null && val !== '') ? val : '-';
+            topDrawerHTML += `<tr><td style="font-weight: 600; width: 50%;">${field.label}</td><td>${displayVal}</td></tr>`;
+        });
+        topDrawerHTML += `</table></div>`;
+
+        // Category 2: Coins (Rolls of Quarters, Rolls of Dimes, Rolls of Nickles, Pennies)
+        const coinFields = [
             { label: "Rolls of Quarters", index: 10 },
             { label: "Rolls of Dimes", index: 11 },
             { label: "Rolls of Nickles", index: 12 },
-            { label: "Pennies", index: 13 },
+            { label: "Pennies", index: 13 }
+        ];
+        let coinsTotal = 0;
+        let coinsHTML = `<div class="form-section"><h3>Coins</h3><table>`;
+        coinFields.forEach(field => {
+            let val = row[field.index];
+            coinsTotal += parseNum(val);
+            let displayVal = (val !== undefined && val !== null && val !== '') ? val : '-';
+            coinsHTML += `<tr><td style="font-weight: 600; width: 50%;">${field.label}</td><td>${displayVal}</td></tr>`;
+        });
+        coinsHTML += `</table></div>`;
+
+        // Category 3: Cash (Singles, Fives, Large Bills)
+        const cashFields = [
             { label: "Singles", index: 6 },
             { label: "Fives", index: 5 },
-            { label: "Large Bills", index: 4 },
+            { label: "Large Bills", index: 4 }
+        ];
+        let cashTotal = 0;
+        let cashHTML = `<div class="form-section"><h3>Cash</h3><table>`;
+        cashFields.forEach(field => {
+            let val = row[field.index];
+            cashTotal += parseNum(val);
+            let displayVal = (val !== undefined && val !== null && val !== '') ? val : '-';
+            cashHTML += `<tr><td style="font-weight: 600; width: 50%;">${field.label}</td><td>${displayVal}</td></tr>`;
+        });
+        cashHTML += `</table></div>`;
+
+        // Category 4: Bags (Bag #1 through #5 + Total Bags)
+        const bagFields = [
             { label: "Bag #1", index: 14 },
             { label: "Bag #2", index: 15 },
             { label: "Bag #3", index: 16 },
             { label: "Bag #4", index: 17 },
-            { label: "Bag #5", index: 18 },
+            { label: "Bag #5", index: 18 }
+        ];
+        let bagsTotal = 0;
+        let bagsHTML = `<div class="form-section"><h3>Bags</h3><table>`;
+        bagFields.forEach(field => {
+            let val = row[field.index];
+            bagsTotal += parseNum(val);
+            let displayVal = (val !== undefined && val !== null && val !== '') ? val : '-';
+            bagsHTML += `<tr><td style="font-weight: 600; width: 50%;">${field.label}</td><td>${displayVal}</td></tr>`;
+        });
+        bagsHTML += `<tr><td style="font-weight: 700; width: 50%; color: var(--primary);">Total Bags</td><td style="font-weight: 700; color: var(--primary);">${bagsTotal}</td></tr>`;
+        bagsHTML += `</table></div>`;
+
+        // Category 5: Tills (Till #1 through #5 + Total Tills)
+        const tillFields = [
             { label: "Till #1", index: 19 },
             { label: "Till #2", index: 20 },
             { label: "Till #3", index: 21 },
             { label: "Till #4", index: 22 },
-            { label: "Till #5", index: 23 },
-            { label: "Received", index: 24 },
-            { label: "Deposited", index: 25 }
+            { label: "Till #5", index: 23 }
         ];
-
-        fieldMapping.forEach(field => {
+        let tillsTotal = 0;
+        let tillsHTML = `<div class="form-section"><h3>Tills</h3><table>`;
+        tillFields.forEach(field => {
             let val = row[field.index];
+            tillsTotal += parseNum(val);
             let displayVal = (val !== undefined && val !== null && val !== '') ? val : '-';
-            tableHTML += `<tr><td style="font-weight: 600; width: 50%;">${field.label}</td><td>${displayVal}</td></tr>`;
+            tillsHTML += `<tr><td style="font-weight: 600; width: 50%;">${field.label}</td><td>${displayVal}</td></tr>`;
         });
+        tillsHTML += `<tr><td style="font-weight: 700; width: 50%; color: var(--primary);">Total Tills</td><td style="font-weight: 700; color: var(--primary);">${tillsTotal}</td></tr>`;
+        tillsHTML += `</table></div>`;
 
-        tableHTML += `</table></div>`;
-        displayDiv.innerHTML = tableHTML;
+        // Category 6: Stats (Received, Deposited, Total, Total Before Received, Total After Deposit, Total With Tills)
+        const receivedVal = parseNum(row[24]);
+        const depositedVal = parseNum(row[25]);
+        const grandTotal = topDrawerTotal + coinsTotal + cashTotal;
+        const totalBeforeReceived = grandTotal - receivedVal;
+        const totalAfterDeposit = grandTotal - depositedVal;
+        const totalWithTills = grandTotal + 1500;
+
+        let statsHTML = `<div class="form-section"><h3>Stats</h3><table>`;
+        statsHTML += `<tr><td style="font-weight: 600; width: 50%;">Received</td><td>${row[24] !== undefined && row[24] !== null && row[24] !== '' ? row[24] : '-'}</td></tr>`;
+        statsHTML += `<tr><td style="font-weight: 600; width: 50%;">Deposited</td><td>${row[25] !== undefined && row[25] !== null && row[25] !== '' ? row[25] : '-'}</td></tr>`;
+        statsHTML += `<tr><td style="font-weight: 700; width: 50%; color: var(--primary);">Total</td><td style="font-weight: 700; color: var(--primary);">${grandTotal}</td></tr>`;
+        statsHTML += `<tr><td style="font-weight: 700; width: 50%; color: var(--primary);">Total Before Received</td><td style="font-weight: 700; color: var(--primary);">${totalBeforeReceived}</td></tr>`;
+        statsHTML += `<tr><td style="font-weight: 700; width: 50%; color: var(--primary);">Total After Deposit</td><td style="font-weight: 700; color: var(--primary);">${totalAfterDeposit}</td></tr>`;
+        statsHTML += `<tr><td style="font-weight: 700; width: 50%; color: var(--primary);">Total With Tills</td><td style="font-weight: 700; color: var(--primary);">${totalWithTills}</td></tr>`;
+        statsHTML += `</table></div>`;
+
+        displayDiv.innerHTML = topDrawerHTML + coinsHTML + cashHTML + bagsHTML + tillsHTML + statsHTML;
     }
 
     // Form Submission Handling
