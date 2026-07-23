@@ -219,8 +219,8 @@ h1, h2, h3, input, select, option, button, th, td, label {
 <div class="container">
     <!-- Top Navigation Tabs -->
     <div class="tab-buttons">
-        <button id="btn-submit" class="active" onclick="switchTab('submit')">Log New Entry</button>
-        <button id="btn-view" onclick="switchTab('view')">View Records UI</button>
+        <button id="btn-submit" class="active" onclick="switchTab('submit')">New Log Entry</button>
+        <button id="btn-view" onclick="switchTab('view')">View Log</button>
     </div>
 
     <!-- PANEL 1: SUBMIT NEW ENTRY FORM -->
@@ -311,7 +311,7 @@ h1, h2, h3, input, select, option, button, th, td, label {
                     </div>
                 </div>
 
-                <button type="submit" id="submit-btn" class="action-btn">Submit to Log</button>
+                <button type="submit" id="submit-btn" class="action-btn">Submit Entry</button>
             </form>
         </div>
 
@@ -320,17 +320,17 @@ h1, h2, h3, input, select, option, button, th, td, label {
             <div class="success-icon">✓</div>
             <h2>Successfully Logged!</h2>
             <p>Your change fund counts have been recorded.</p>
-            <button onclick="resetForm()" class="action-btn" style="width: auto; padding: 10px 20px; background-color: var(--card-bg); color: var(--text-main);">Submit Another Log</button>
+            <button onclick="resetForm()" class="action-btn" style="width: auto; padding: 10px 20px; background-color: var(--card-bg); color: var(--text-main);">Submit Another Log Entry</button>
         </div>
     </div>
 
     <!-- PANEL 2: VIEW RECORDS UI -->
     <div id="panel-view" class="panel">
-        <h1>Submission Viewer</h1>
+        <h1>Log Viewer</h1>
         
                 <!-- Filter Controls for the Dropdown -->
         <div class="form-section">
-            <h3>Filter Submissions</h3>
+            <h3>Filter</h3>
             <div class="grid" style="grid-template-columns: 1fr 1fr auto; align-items: end;">
                 <div class="form-group">
                     <label>Filter by Name</label>
@@ -355,9 +355,9 @@ h1, h2, h3, input, select, option, button, th, td, label {
 
         <div class="form-section">
             <div class="form-group">
-                <label>Select Submission</label>
+                <label>Select Entry</label>
                 <select id="record-dropdown" onchange="displayRecordData()">
-                    <option value="">Loading submissions...</option>
+                    <option value="">Loading entry...</option>
                 </select>
             </div>
         </div>
