@@ -284,13 +284,7 @@
         #success-message {
             display: none;
             text-align: center;
-            padding: 40px 20px;
-        }
-
-        .success-icon {
-            font-size: 3rem;
-            color: #10b981;
-            margin-bottom: 10px;
+            padding: 20px 0;
         }
 
         #form-error-message {
@@ -494,10 +488,12 @@
 
         <!-- Success Message Container -->
         <div id="success-message">
-            <div class="success-icon">✓</div>
-            <h2>Successfully Logged!</h2>
-            <p>Your change fund counts have been recorded.</p>
-            <button onclick="resetForm()" class="action-btn" style="width: auto; padding: 10px 20px; background-color: var(--card-bg); color: var(--text-main);">Submit Another Log Entry</button>
+            <h2 style="color: var(--text-dark);">Successfully Logged!</h2>
+            <p style="color: var(--text-dark);">Your change fund counts have been recorded.</p>
+            
+            <div id="success-stats-container" style="text-align: left; margin-top: 20px;"></div>
+
+            <button onclick="resetForm()" class="action-btn" style="width: auto; padding: 10px 20px; background-color: var(--card-bg); color: var(--text-main); margin-top: 20px;">Submit Another Log Entry</button>
         </div>
     </div>
 
@@ -934,6 +930,45 @@
         }
     }
 
+    function renderSuccessStats() {
+        const topDrawerFields = ['entry.1517829846', 'entry.1744081617', 'entry.898907270', 'entry.1372868115', 'entry.884010152'];
+        const coinFields = ['entry.521101649', 'entry.718207412', 'entry.890888806', 'entry.1565754101'];
+        const cashFields = ['entry.252905748', 'entry.1524898992', 'entry.989973404'];
+
+        let topDrawerTotal = topDrawerFields.reduce((acc, name) => {
+            const el = form.querySelector(`[name="${name}"]`);
+            return acc + parseNum(el ? el.value : 0);
+        }, 0);
+
+        let coinsTotal = coinFields.reduce((acc, name) => {
+            const el = form.querySelector(`[name="${name}"]`);
+            return acc + parseNum(el ? el.value : 0);
+        }, 0);
+
+        let cashTotal = cashFields.reduce((acc, name) => {
+            const el = form.querySelector(`[name="${name}"]`);
+            return acc + parseNum(el ? el.value : 0);
+        }, 0);
+
+        const receivedVal = parseNum(form.querySelector('[name="entry.1389957960"]')?.value);
+        const depositedVal = parseNum(form.querySelector('[name="entry.423453157"]')?.value);
+
+        const sumOfCounts = topDrawerTotal + coinsTotal + cashTotal;
+        const grandTotal = sumOfCounts + receivedVal - depositedVal;
+        const totalBeforeReceived = sumOfCounts;
+        const totalWithTills = sumOfCounts + 1500;
+
+        let statsHTML = `<div class="form-section"><h3>Stats</h3><table>`;
+        statsHTML += `<tr><td style="font-weight: 600; width: 35%;">Received</td><td style="text-align: center;"><span>${receivedVal || '-'}</span></td></tr>`;
+        statsHTML += `<tr><td style="font-weight: 600; width: 35%;">Deposited</td><td style="text-align: center;"><span>${depositedVal || '-'}</span></td></tr>`;
+        statsHTML += `<tr><td style="font-weight: 700; width: 35%; color: var(--primary);">Total</td><td style="font-weight: 700; color: var(--primary); text-align: center;">${grandTotal.toFixed(2)}</td></tr>`;
+        statsHTML += `<tr><td style="font-weight: 700; width: 35%; color: var(--primary);">Total Before Received & Deposit</td><td style="font-weight: 700; color: var(--primary); text-align: center;">${totalBeforeReceived.toFixed(2)}</td></tr>`;
+        statsHTML += `<tr><td style="font-weight: 700; width: 35%; color: var(--primary);">Total With Tills</td><td style="font-weight: 700; color: var(--primary); text-align: center;">${totalWithTills.toFixed(2)}</td></tr>`;
+        statsHTML += `</table></div>`;
+
+        document.getElementById('success-stats-container').innerHTML = statsHTML;
+    }
+
     // Form Submission Handling with Custom Validation
     const form = document.getElementById('change-fund-form');
     const submitBtn = document.getElementById('submit-btn');
@@ -996,6 +1031,7 @@
                 body: formData
             });
 
+            renderSuccessStats();
             formContainer.style.display = 'none';
             successMessage.style.display = 'block';
             globalSheetData = []; // Clear cache so the view tab re-fetches latest updates
