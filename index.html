@@ -26,6 +26,10 @@
             --diff-color: #dc2626;  /* Red for differences */
         }
 
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'CustomOTFFont', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg);
@@ -144,6 +148,10 @@
             gap: 15px;
         }
 
+        .grid > * {
+            min-width: 0; /* prevents grid items with intrinsic min-content width from overflowing on small screens */
+        }
+
         /* Responsive Filter Grids */
         .filter-grid-primary {
             display: grid;
@@ -159,9 +167,121 @@
             align-items: end;
         }
 
+        .filter-grid-primary > *, .filter-grid-secondary > * {
+            min-width: 0; /* selects/date inputs otherwise refuse to shrink and push siblings off-screen */
+        }
+
         @media (max-width: 650px) {
             .filter-grid-primary, .filter-grid-secondary {
                 grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* Stats row: checkbox label + conditional amount input */
+        .stat-toggle-row {
+            display: grid;
+            grid-template-columns: 210px minmax(0, 1fr);
+            align-items: center;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .stat-toggle-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-weight: normal;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            margin-bottom: 0;
+        }
+
+        .stat-toggle-row .form-group {
+            width: 100%;
+            min-width: 0;
+        }
+
+        /* Side-by-side comparison layout ("A vs B") used in the log viewer */
+        .compare-row {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 35px;
+            width: 100%;
+            min-width: 0;
+        }
+
+        .compare-val {
+            min-width: 0;
+            overflow-wrap: break-word;
+        }
+
+        .compare-vs {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        /* Low-DPI / narrow-viewport phones (~320px CSS width and similar) */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 14px;
+                border-width: 6px;
+            }
+
+            .form-section {
+                padding: 14px;
+            }
+
+            .form-section h3 {
+                margin: -14px -14px 12px -14px;
+                padding: 10px 14px;
+                flex-wrap: wrap;
+                gap: 4px;
+            }
+
+            .grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 10px;
+            }
+
+            .filter-grid-primary, .filter-grid-secondary {
+                grid-template-columns: 1fr;
+            }
+
+            th, td {
+                padding: 8px 6px;
+                font-size: 0.9rem;
+            }
+
+            button.action-btn {
+                font-size: 0.95rem;
+                padding: 10px 8px;
+            }
+
+            .stat-toggle-row {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .stat-toggle-label {
+                white-space: normal;
+                font-size: 0.85rem;
+            }
+
+            .compare-row {
+                grid-template-columns: 1fr;
+                gap: 2px;
+                text-align: center;
+            }
+
+            .compare-row .compare-val {
+                text-align: center !important;
             }
         }
 
@@ -365,53 +485,6 @@
                     </div>
                 </div>
 
-                <!-- Bags -->
-                <div class="form-section">
-                    <h3>Bags</h3>
-                    <div class="grid">
-                        <div class="form-group">
-                            <label>Bag #1</label>
-                            <div class="custom-decimal-wrapper">
-                                <span class="custom-decimal-prefix">150.</span>
-                                <input type="text" maxlength="2" inputmode="numeric" placeholder="00" class="custom-decimal-input" value="">
-                                <input type="hidden" name="entry.557609349" class="custom-decimal-hidden mandatory-input" value="150.00">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Bag #2</label>
-                            <div class="custom-decimal-wrapper">
-                                <span class="custom-decimal-prefix">150.</span>
-                                <input type="text" maxlength="2" inputmode="numeric" placeholder="00" class="custom-decimal-input" value="">
-                                <input type="hidden" name="entry.874061341" class="custom-decimal-hidden mandatory-input" value="150.00">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Bag #3</label>
-                            <div class="custom-decimal-wrapper">
-                                <span class="custom-decimal-prefix">150.</span>
-                                <input type="text" maxlength="2" inputmode="numeric" placeholder="00" class="custom-decimal-input" value="">
-                                <input type="hidden" name="entry.1215915283" class="custom-decimal-hidden mandatory-input" value="150.00">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Bag #4</label>
-                            <div class="custom-decimal-wrapper">
-                                <span class="custom-decimal-prefix">150.</span>
-                                <input type="text" maxlength="2" inputmode="numeric" placeholder="00" class="custom-decimal-input" value="">
-                                <input type="hidden" name="entry.2066716551" class="custom-decimal-hidden mandatory-input" value="150.00">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Bag #5</label>
-                            <div class="custom-decimal-wrapper">
-                                <span class="custom-decimal-prefix">150.</span>
-                                <input type="text" maxlength="2" inputmode="numeric" placeholder="00" class="custom-decimal-input" value="">
-                                <input type="hidden" name="entry.352372494" class="custom-decimal-hidden mandatory-input" value="150.00">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Tills -->
                 <div class="form-section">
                     <h3>Tills</h3>
@@ -459,28 +532,85 @@
                     </div>
                 </div>
 
-                <!-- Stats -->
+                <!-- Bags -->
                 <div class="form-section">
-                    <h3>Stats</h3>
-                    <div style="display: flex; flex-direction: column; gap: 15px; width: 100%; box-sizing: border-box;">
-                        <div style="display: grid; grid-template-columns: 210px minmax(0, 1fr); align-items: center; gap: 20px; width: 100%; box-sizing: border-box;">
-                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal; font-size: 0.8rem; white-space: nowrap; margin-bottom: 0;">
-                                <input type="checkbox" id="check-received" onchange="toggleStatField('received')"> Change Fund Received
-                            </label>
-                            <div class="form-group conditional-group" id="group-received" style="width: 100%; box-sizing: border-box;">
-                                <input type="number" step="any" name="entry.1389957960" id="input-received" placeholder="Received amount" style="width: 100%; box-sizing: border-box;">
+                    <h3>Bags</h3>
+                    <div class="grid">
+                        <div class="form-group">
+                            <label>Bag #1</label>
+                            <div class="custom-decimal-wrapper">
+                                <span class="custom-decimal-prefix">150.</span>
+                                <input type="text" maxlength="2" inputmode="numeric" placeholder="00" class="custom-decimal-input" value="">
+                                <input type="hidden" name="entry.557609349" class="custom-decimal-hidden mandatory-input" value="150.00">
                             </div>
                         </div>
-                        <div style="display: grid; grid-template-columns: 210px minmax(0, 1fr); align-items: center; gap: 20px; width: 100%; box-sizing: border-box;">
-                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: normal; font-size: 0.8rem; white-space: nowrap; margin-bottom: 0;">
-                                <input type="checkbox" id="check-deposited" onchange="toggleStatField('deposited')"> Change Fund Deposited
-                            </label>
-                            <div class="form-group conditional-group" id="group-deposited" style="width: 100%; box-sizing: border-box;">
-                                <input type="number" step="any" name="entry.423453157" id="input-deposited" placeholder="Deposited amount" style="width: 100%; box-sizing: border-box;">
+                        <div class="form-group">
+                            <label>Bag #2</label>
+                            <div class="custom-decimal-wrapper">
+                                <span class="custom-decimal-prefix">150.</span>
+                                <input type="text" maxlength="2" inputmode="numeric" placeholder="00" class="custom-decimal-input" value="">
+                                <input type="hidden" name="entry.874061341" class="custom-decimal-hidden mandatory-input" value="150.00">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Bag #3</label>
+                            <div class="custom-decimal-wrapper">
+                                <span class="custom-decimal-prefix">150.</span>
+                                <input type="text" maxlength="2" inputmode="numeric" placeholder="00" class="custom-decimal-input" value="">
+                                <input type="hidden" name="entry.1215915283" class="custom-decimal-hidden mandatory-input" value="150.00">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Bag #4</label>
+                            <div class="custom-decimal-wrapper">
+                                <span class="custom-decimal-prefix">150.</span>
+                                <input type="text" maxlength="2" inputmode="numeric" placeholder="00" class="custom-decimal-input" value="">
+                                <input type="hidden" name="entry.2066716551" class="custom-decimal-hidden mandatory-input" value="150.00">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Bag #5</label>
+                            <div class="custom-decimal-wrapper">
+                                <span class="custom-decimal-prefix">150.</span>
+                                <input type="text" maxlength="2" inputmode="numeric" placeholder="00" class="custom-decimal-input" value="">
+                                <input type="hidden" name="entry.352372494" class="custom-decimal-hidden mandatory-input" value="150.00">
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Stats -->
+                <div class="form-section">
+                    <h3>Stats</h3>
+                    <div style="display: flex; flex-direction: column; gap: 15px; width: 100%;">
+                        <div class="stat-toggle-row">
+                            <label class="stat-toggle-label">
+                                <input type="checkbox" id="check-received" onchange="toggleStatField('received')"> Change Fund Received
+                            </label>
+                            <div class="form-group conditional-group" id="group-received">
+                                <input type="number" step="any" name="entry.1389957960" id="input-received" placeholder="Received amount">
+                            </div>
+                        </div>
+                        <div class="stat-toggle-row">
+                            <label class="stat-toggle-label">
+                                <input type="checkbox" id="check-deposited" onchange="toggleStatField('deposited')"> Change Fund Deposited
+                            </label>
+                            <div class="form-group conditional-group" id="group-deposited">
+                                <input type="number" step="any" name="entry.423453157" id="input-deposited" placeholder="Deposited amount">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Total Tracker -->
+                <div class="form-section">
+                    <h3>Live Total Check <span class="section-subtitle">Compares your count to the last logged entry</span></h3>
+                    <div id="live-tracker-content">
+                        <p style="text-align:center; color: var(--text-muted); margin: 0;">Loading previous entry for comparison...</p>
+                    </div>
+                </div>
+
+                <div id="discrepancy-warning" style="display:none; background-color:#fef3c7; border:1px solid #d97706; color:#92400e; padding:12px; border-radius:6px; margin-bottom:20px; font-weight:600;"></div>
 
                 <button type="submit" id="submit-btn" class="action-btn">Submit Entry</button>
             </form>
@@ -586,6 +716,89 @@
     let globalSheetData = [];
     let isComparing = false;
 
+    // ---- Live Total Tracker state ----
+    let previousEntryTotal = null; // grand total of the most recent logged entry, used as the baseline to reconcile against
+    let discrepancyAcknowledged = false; // set true once user chooses "Submit Anyway" on a mismatch
+
+    const TOP_DRAWER_FIELD_NAMES = ['entry.1517829846', 'entry.1744081617', 'entry.898907270', 'entry.1372868115', 'entry.884010152'];
+    const COIN_FIELD_NAMES = ['entry.521101649', 'entry.718207412', 'entry.890888806', 'entry.1565754101'];
+    const CASH_FIELD_NAMES = ['entry.252905748', 'entry.1524898992', 'entry.989973404'];
+
+    // Same column indices used elsewhere in the sheet-reading code (Top Drawer + Coins + Cash + Received - Deposited)
+    const SHEET_COL_TOP_DRAWER = [2, 3, 7, 8, 9];
+    const SHEET_COL_COINS = [10, 11, 12, 13];
+    const SHEET_COL_CASH = [4, 5, 6];
+    const SHEET_COL_RECEIVED = 24;
+    const SHEET_COL_DEPOSITED = 25;
+
+    function computeRowGrandTotal(row) {
+        const sumIdx = (idxs) => idxs.reduce((acc, i) => acc + parseNum(row[i]), 0);
+        const sumOfCounts = sumIdx(SHEET_COL_TOP_DRAWER) + sumIdx(SHEET_COL_COINS) + sumIdx(SHEET_COL_CASH);
+        const received = parseNum(row[SHEET_COL_RECEIVED]);
+        const deposited = parseNum(row[SHEET_COL_DEPOSITED]);
+        return sumOfCounts + received - deposited;
+    }
+
+    // Loads sheet data (if not already cached) purely to establish the "previous total" baseline for the live tracker.
+    async function loadPreviousEntryTotalIfNeeded() {
+        if (globalSheetData.length === 0) {
+            await fetchSheetData();
+        }
+        if (globalSheetData.length > 1) {
+            const lastRow = globalSheetData[globalSheetData.length - 1]; // rows are stored oldest-first internally
+            previousEntryTotal = computeRowGrandTotal(lastRow);
+        } else {
+            previousEntryTotal = 0; // no prior entries logged yet
+        }
+        updateLiveTracker();
+    }
+
+    // Reads the current form inputs and computes the live "Current Total" the same way the Stats section does.
+    function getLiveTotals() {
+        const sumFieldGroup = (names) => names.reduce((acc, name) => {
+            const el = form.querySelector(`[name="${name}"]`);
+            return acc + parseNum(el ? el.value : 0);
+        }, 0);
+
+        const currentSumOfCounts = sumFieldGroup(TOP_DRAWER_FIELD_NAMES) + sumFieldGroup(COIN_FIELD_NAMES) + sumFieldGroup(CASH_FIELD_NAMES);
+
+        const receivedChecked = document.getElementById('check-received').checked;
+        const depositedChecked = document.getElementById('check-deposited').checked;
+        const receivedVal = receivedChecked ? parseNum(document.getElementById('input-received').value) : 0;
+        const depositedVal = depositedChecked ? parseNum(document.getElementById('input-deposited').value) : 0;
+
+        const currentTotal = currentSumOfCounts + receivedVal - depositedVal;
+
+        return { currentSumOfCounts, receivedVal, depositedVal, currentTotal };
+    }
+
+    function updateLiveTracker() {
+        const trackerContent = document.getElementById('live-tracker-content');
+        if (!trackerContent) return;
+
+        if (previousEntryTotal === null) {
+            trackerContent.innerHTML = `<p style="text-align:center; color: var(--text-muted); margin: 0;">Loading previous entry for comparison...</p>`;
+            return;
+        }
+
+        const { receivedVal, depositedVal, currentTotal } = getLiveTotals();
+        const expectedTotal = previousEntryTotal + receivedVal - depositedVal;
+        const diff = currentTotal - expectedTotal;
+        const isMatch = Math.abs(diff) < 0.005;
+        const adjustedNote = (receivedVal || depositedVal) ? ' (adjusted for received/deposited)' : '';
+
+        trackerContent.innerHTML = `
+            <table>
+                <tr><td style="font-weight: 600; width: 55%;">Previous Logged Total</td><td style="text-align: center;">$${previousEntryTotal.toFixed(2)}</td></tr>
+                <tr><td style="font-weight: 600;">Expected Total${adjustedNote}</td><td style="text-align: center;">$${expectedTotal.toFixed(2)}</td></tr>
+                <tr><td style="font-weight: 700; color: var(--primary);">Your Current Total</td><td style="text-align: center; font-weight: 700; color: ${isMatch ? 'var(--primary)' : 'var(--diff-color)'};">$${currentTotal.toFixed(2)}</td></tr>
+            </table>
+            <p style="text-align:center; margin: 12px 0 0 0; font-weight: 600; color: ${isMatch ? '#15803d' : 'var(--diff-color)'};">
+                ${isMatch ? 'Totals match' : `Off by $${Math.abs(diff).toFixed(2)}`}
+            </p>
+        `;
+    }
+
     // Initialize custom decimal inputs sync
     document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.custom-decimal-wrapper').forEach(wrapper => {
@@ -603,6 +816,20 @@
                     hiddenInput.value = `150.${val}`;
                 }
             });
+        });
+
+        // Load the baseline "previous total" for the live tracker as soon as the page loads
+        loadPreviousEntryTotalIfNeeded();
+
+        // Keep the live tracker in sync with whatever the user types/checks
+        const changeFundForm = document.getElementById('change-fund-form');
+        changeFundForm.addEventListener('input', () => {
+            discrepancyAcknowledged = false; // any edit invalidates a previous "submit anyway" confirmation
+            updateLiveTracker();
+        });
+        changeFundForm.addEventListener('change', () => {
+            discrepancyAcknowledged = false;
+            updateLiveTracker();
         });
     });
 
@@ -716,7 +943,7 @@
         
         if (globalSheetData.length <= 1) return;
 
-        for (let i = 1; i < globalSheetData.length; i++) {
+        for (let i = globalSheetData.length - 1; i >= 1; i--) {
             let timestamp = globalSheetData[i][0]; // Column A
             let name = globalSheetData[i][1];        // Column B
 
@@ -803,7 +1030,7 @@
                 let isDiff = String(val1).trim() !== String(val2).trim();
                 let diffStyle = isDiff ? `color: var(--diff-color); font-weight: bold;` : (customColor ? `color: ${customColor};` : '');
                 
-                return `<td><div style="display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 35px; width: 100%;"><span style="text-align: right; ${diffStyle}">${disp1}</span><span style="color: var(--text-muted); font-size: 0.85rem; text-align: center;">vs</span><span style="text-align: left; ${diffStyle}">${disp2}</span></div></td>`;
+                return `<td><div class="compare-row"><span class="compare-val" style="text-align: right; ${diffStyle}">${disp1}</span><span class="compare-vs">vs</span><span class="compare-val" style="text-align: left; ${diffStyle}">${disp2}</span></div></td>`;
             }
         }
 
@@ -945,7 +1172,7 @@
         statsHTML += getStatRowHTML("Total With Tills", totalWithTills1.toFixed(2), totalWithTills2.toFixed(2), row2);
         statsHTML += `</table></div>`;
 
-        displayDiv.innerHTML = topDrawerHTML + coinsHTML + cashHTML + bagsHTML + tillsHTML + statsHTML;
+        displayDiv.innerHTML = topDrawerHTML + coinsHTML + cashHTML + tillsHTML + bagsHTML + statsHTML;
     }
 
     function getStatRowHTML(label, val1, val2, hasRow2) {
@@ -954,7 +1181,7 @@
         } else {
             let isDiff = val1 !== val2;
             let diffStyle = isDiff ? `color: var(--diff-color); font-weight: bold;` : `color: var(--primary); font-weight: 700;`;
-            return `<tr><td style="font-weight: 700; width: 35%; color: var(--primary);">${label}</td><td><div style="display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 35px; width: 100%;"><span style="text-align: right; ${diffStyle}">${val1}</span><span style="color: var(--text-muted); font-size: 0.85rem; text-align: center;">vs</span><span style="text-align: left; ${diffStyle}">${val2}</span></div></td></tr>`;
+            return `<tr><td style="font-weight: 700; width: 35%; color: var(--primary);">${label}</td><td><div class="compare-row"><span class="compare-val" style="text-align: right; ${diffStyle}">${val1}</span><span class="compare-vs">vs</span><span class="compare-val" style="text-align: left; ${diffStyle}">${val2}</span></div></td></tr>`;
         }
     }
 
@@ -1026,7 +1253,7 @@
         setTimeout(async () => {
             await fetchSheetData();
             if (dropdown.options.length > 1) {
-                dropdown.selectedIndex = dropdown.options.length - 1;
+                dropdown.selectedIndex = 1; // index 0 is the placeholder; newest entry is now first in the list
                 displayRecordData();
             }
         }, 1500);
@@ -1038,11 +1265,14 @@
     const formContainer = document.getElementById('form-container');
     const successMessage = document.getElementById('success-message');
     const errorDiv = document.getElementById('form-error-message');
+    const warningDiv = document.getElementById('discrepancy-warning');
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         errorDiv.style.display = 'none';
         errorDiv.innerHTML = '';
+        warningDiv.style.display = 'none';
+        warningDiv.innerHTML = '';
 
         let errors = [];
 
@@ -1082,10 +1312,58 @@
             return;
         }
 
+        // 4. Reconciliation check: does the counted total match what's expected from the last entry
+        //    (adjusted for anything received or deposited this round)?
+        if (!discrepancyAcknowledged && previousEntryTotal !== null) {
+            const { receivedVal, depositedVal, currentTotal } = getLiveTotals();
+            const expectedTotal = previousEntryTotal + receivedVal - depositedVal;
+            const diff = currentTotal - expectedTotal;
+
+            if (Math.abs(diff) >= 0.005) {
+                showDiscrepancyWarning(expectedTotal, currentTotal, diff);
+                return;
+            }
+        }
+
+        await submitEntry();
+    });
+
+    function showDiscrepancyWarning(expectedTotal, currentTotal, diff) {
+        const direction = diff > 0 ? 'over' : 'under';
+        warningDiv.innerHTML = `
+            <div>Your total doesn't match what's expected based on the last entry.</div>
+            <div style="font-weight: normal; margin-top: 8px;">
+                Expected Total: $${expectedTotal.toFixed(2)}<br>
+                Your Current Total: $${currentTotal.toFixed(2)}<br>
+                Difference: $${Math.abs(diff).toFixed(2)} ${direction}
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap;">
+                <button type="button" class="action-btn" id="btn-submit-anyway" style="margin-top: 0; width: auto; padding: 8px 16px; background-color: #b91c1c;">Submit Anyway</button>
+                <button type="button" class="action-btn" id="btn-cancel-submit" style="margin-top: 0; width: auto; padding: 8px 16px; background-color: var(--card-bg); color: var(--text-main);">Go Back &amp; Fix</button>
+            </div>
+        `;
+        warningDiv.style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        document.getElementById('btn-submit-anyway').addEventListener('click', async () => {
+            discrepancyAcknowledged = true;
+            warningDiv.style.display = 'none';
+            warningDiv.innerHTML = '';
+            await submitEntry();
+        });
+
+        document.getElementById('btn-cancel-submit').addEventListener('click', () => {
+            warningDiv.style.display = 'none';
+            warningDiv.innerHTML = '';
+        });
+    }
+
+    async function submitEntry() {
         submitBtn.textContent = 'Submitting...';
         submitBtn.disabled = true;
 
         const formData = new FormData(form);
+        const { currentTotal } = getLiveTotals();
 
         try {
             await fetch(GOOGLE_FORM_URL, {
@@ -1098,6 +1376,11 @@
             formContainer.style.display = 'none';
             successMessage.style.display = 'block';
             globalSheetData = []; // Clear cache so the view tab re-fetches latest updates
+
+            // The entry we just submitted becomes the new baseline for the next entry's live tracker,
+            // without needing to wait on Google Sheets to finish processing.
+            previousEntryTotal = currentTotal;
+            discrepancyAcknowledged = false;
         } catch (error) {
             alert('There was an error submitting the form. Please check your connection.');
             console.error('Submission failed:', error);
@@ -1105,7 +1388,7 @@
             submitBtn.textContent = 'Submit Entry';
             submitBtn.disabled = false;
         }
-    });
+    }
 
     function resetForm() {
         form.reset();
@@ -1119,9 +1402,13 @@
         document.getElementById('group-received').classList.remove('visible');
         document.getElementById('group-deposited').classList.remove('visible');
         errorDiv.style.display = 'none';
+        warningDiv.style.display = 'none';
+        warningDiv.innerHTML = '';
+        discrepancyAcknowledged = false;
         successMessage.style.display = 'none';
         formContainer.style.display = 'block';
         window.scrollTo(0, 0);
+        updateLiveTracker();
     }
 </script>
 
