@@ -627,7 +627,7 @@
             <button onclick="viewSubmittedEntry()" class="action-btn" style="width: auto; padding: 10px 20px; background-color: var(--card-bg); color: var(--text-main); margin-top: 0;">View Entry in Log Viewer</button>
         </div>
         <div style="display: flex; justify-content: center; margin-top: 20px;">
-            <button type="button" class="action-btn" id="btn-copy-and-open" style="margin-top: 0; width: auto; padding: 10px 20px; background-color: var(--primary); color: #ffffff;">📋 Copy Total & Open InForm ↗</button>
+            <button type="button" class="action-btn" id="btn-copy-and-open" style="margin-top: 0; width: auto; padding: 10px 20px; background-color: var(--card-bg); color: #ffffff;">Copy Total & Open Inform ↗</button>
         </div>
         
     </div>
@@ -1390,12 +1390,10 @@
             const combinedBtn = document.getElementById('btn-copy-and-open');
             if (combinedBtn) {
                 combinedBtn.onclick = function() {
-                    window.open('https://m.inform.cfahome.com/m2/Financial', '_blank');
-
-                    navigator.clipboard.writeText(currentTotal.toFixed(2))
+                     navigator.clipboard.writeText(currentTotal.toFixed(2))
                         .then(() => {
                             const originalText = this.innerHTML;
-                            this.innerHTML = '✅ Copied!';
+                            this.innerHTML = 'Copied!';
                             this.style.backgroundColor = '#15803d'; // Green success color
                             
                             setTimeout(() => {
@@ -1407,6 +1405,7 @@
                             console.error('Failed to copy total: ', err);
                             alert('Could not copy to clipboard. Please copy it manually.');
                         });
+                    window.open('https://m.inform.cfahome.com/m2/Financial', '_blank');
                 };
             }
 
