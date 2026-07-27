@@ -610,7 +610,7 @@
                     </div>
                 </div>
 
-                <div id="discrepancy-warning" style="display:none; background-color:#fef3c7; border:1px solid #d97706; color:#92400e; padding:12px; border-radius:6px; margin-bottom:20px; font-weight:600;"></div>
+                <div id="discrepancy-warning" style="display:none; background-color:#fee2e2; border:1px solid #ef4444; color:#b91c1c; padding:12px; border-radius:6px; margin-bottom:20px; font-weight:600;"></div>
 
                 <button type="submit" id="submit-btn" class="action-btn">Submit Entry</button>
             </form>
@@ -792,10 +792,12 @@
                 <tr><td style="font-weight: 600; width: 55%;">Previous Logged Total</td><td style="text-align: center;">$${previousEntryTotal.toFixed(2)}</td></tr>
                 <tr><td style="font-weight: 600;">Expected Total${adjustedNote}</td><td style="text-align: center;">$${expectedTotal.toFixed(2)}</td></tr>
                 <tr><td style="font-weight: 700; color: var(--primary);">Your Current Total</td><td style="text-align: center; font-weight: 700; color: ${isMatch ? 'var(--primary)' : 'var(--diff-color)'};">$${currentTotal.toFixed(2)}</td></tr>
+                <tr>
+                    <td colspan="2" style="text-align:center; font-weight: 600; color: ${isMatch ? '#15803d' : 'var(--diff-color)'}; border-bottom: none; padding-top: 15px;">
+                        ${isMatch ? 'Totals match' : `Off by $${Math.abs(diff).toFixed(2)}`}
+                    </td>
+                </tr>
             </table>
-            <p style="text-align:center; margin: 12px 0 0 0; font-weight: 600; color: ${isMatch ? '#15803d' : 'var(--diff-color)'};">
-                ${isMatch ? 'Totals match' : `Off by $${Math.abs(diff).toFixed(2)}`}
-            </p>
         `;
     }
 
@@ -1343,7 +1345,9 @@
             </div>
         `;
         warningDiv.style.display = 'block';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        // Changed this line to scroll to the warning box instead of the top of the page
+        warningDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
         document.getElementById('btn-submit-anyway').addEventListener('click', async () => {
             discrepancyAcknowledged = true;
