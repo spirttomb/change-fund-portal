@@ -790,10 +790,10 @@
             <table>
                 <tr><td style="font-weight: 600;">Expected Total${adjustedNote}</td><td style="text-align: center;">$${expectedTotal.toFixed(2)}</td></tr>
                 <tr><td style="font-weight: 700; color: var(--primary);">Your Current Total</td><td style="text-align: center; font-weight: 700; color: ${isMatch ? 'var(--primary)' : 'var(--diff-color)'};">$${currentTotal.toFixed(2)}</td></tr>
-            </table>
-            <p style="text-align:center; margin: 12px 0 0 0; font-weight: 600; color: ${isMatch ? '#15803d' : 'var(--diff-color)'};">
+                <p style="text-align:center; margin: 12px 0 0 0; font-weight: 600; color: ${isMatch ? '#15803d' : 'var(--diff-color)'};">
                 ${isMatch ? 'Totals match' : `Off by $${Math.abs(diff).toFixed(2)}`}
-            </p>
+                </p>
+            </table>
         `;
     }
 
