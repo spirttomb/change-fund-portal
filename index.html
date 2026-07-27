@@ -604,7 +604,7 @@
 
                 <!-- Live Total Tracker -->
                 <div class="form-section">
-                    <h3>Live Total Check <span class="section-subtitle">Compares your count to the last logged entry</span></h3>
+                    <h3>Live Total Check</h3>
                     <div id="live-tracker-content">
                         <p style="text-align:center; color: var(--text-muted); margin: 0;">Loading previous entry for comparison...</p>
                     </div>
@@ -789,7 +789,6 @@
 
         trackerContent.innerHTML = `
             <table>
-                <tr><td style="font-weight: 600; width: 55%;">Previous Logged Total</td><td style="text-align: center;">$${previousEntryTotal.toFixed(2)}</td></tr>
                 <tr><td style="font-weight: 600;">Expected Total${adjustedNote}</td><td style="text-align: center;">$${expectedTotal.toFixed(2)}</td></tr>
                 <tr><td style="font-weight: 700; color: var(--primary);">Your Current Total</td><td style="text-align: center; font-weight: 700; color: ${isMatch ? 'var(--primary)' : 'var(--diff-color)'};">$${currentTotal.toFixed(2)}</td></tr>
             </table>
