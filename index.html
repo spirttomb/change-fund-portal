@@ -616,18 +616,20 @@
             </form>
         </div>
 
-        <!-- Success Message Container -->
-        <div id="success-message">
-            <h2 style="color: var(--text-dark);">Successfully Logged!</h2>
-            <p style="color: var(--text-dark);">Your Changefund Log Entry has been recorded.</p>
-            
-            <div id="success-stats-container" style="text-align: left; margin-top: 20px;"></div>
-
-            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px; flex-wrap: wrap;">
-                <button onclick="resetForm()" class="action-btn" style="width: auto; padding: 10px 20px; background-color: var(--card-bg); color: var(--text-main); margin-top: 0;">Submit Another Log Entry</button>
-                <button onclick="viewSubmittedEntry()" class="action-btn" style="width: auto; padding: 10px 20px; background-color: var(--card-bg); color: var(--text-main); margin-top: 0;">View Entry in Log Viewer</button>
-            </div>
+  <!-- Success Message Container -->
+    <div id="success-message">
+        <h2 style="color: var(--text-dark);">Successfully Logged!</h2>
+        <p style="color: var(--text-dark);">Your Changefund Log Entry has been recorded.</p>
+        
+        <div id="success-stats-container" style="text-align: left; margin-top: 20px;"></div>
+        <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px; flex-wrap: wrap;">
+            <button onclick="resetForm()" class="action-btn" style="width: auto; padding: 10px 20px; background-color: var(--card-bg); color: var(--text-main); margin-top: 0;">Submit Another Log Entry</button>
+            <button onclick="viewSubmittedEntry()" class="action-btn" style="width: auto; padding: 10px 20px; background-color: var(--card-bg); color: var(--text-main); margin-top: 0;">View Entry in Log Viewer</button>
         </div>
+        <div style="display: flex; justify-content: center; margin-top: 20px;">
+            <button type="button" class="action-btn" id="btn-copy-and-open" style="margin-top: 0; width: auto; padding: 10px 20px; background-color: var(--primary); color: #ffffff;">📋 Copy Total & Open InForm ↗</button>
+        </div>
+        
     </div>
 
     <!-- PANEL 2: VIEW RECORDS UI -->
@@ -1385,6 +1387,29 @@
             // without needing to wait on Google Sheets to finish processing.
             previousEntryTotal = currentTotal;
             discrepancyAcknowledged = false;
+            const combinedBtn = document.getElementById('btn-copy-and-open');
+            if (combinedBtn) {
+                combinedBtn.onclick = function() {
+                    window.open('https://m.inform.cfahome.com/m2/Financial', '_blank');
+
+                    navigator.clipboard.writeText(currentTotal.toFixed(2))
+                        .then(() => {
+                            const originalText = this.innerHTML;
+                            this.innerHTML = '✅ Copied!';
+                            this.style.backgroundColor = '#15803d'; // Green success color
+                            
+                            setTimeout(() => {
+                                this.innerHTML = originalText;
+                                this.style.backgroundColor = 'var(--primary)'; 
+                            }, 2000);
+                        })
+                        .catch(err => {
+                            console.error('Failed to copy total: ', err);
+                            alert('Could not copy to clipboard. Please copy it manually.');
+                        });
+                };
+            }
+
         } catch (error) {
             alert('There was an error submitting the form. Please check your connection.');
             console.error('Submission failed:', error);
