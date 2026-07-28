@@ -1130,11 +1130,8 @@
         
         const sumOfCounts1 = topDrawerTotal1 + coinsTotal1 + cashTotal1;
         
-        // Reconstruct baseline so the primary "Total" matches the previous log's expected amount
         const baselineTotal1 = sumOfCounts1 - receivedVal1 + depositedVal1;
         const baselineWithTills1 = baselineTotal1 + 1500;
-
-        // Physical totals represent what is actually inside the drawer right now
         const physicalTotal1 = sumOfCounts1;
         const physicalWithTills1 = physicalTotal1 + 1500;
 
@@ -1152,16 +1149,17 @@
             hasReceived2 = row2[24] !== undefined && row2[24] !== null && row2[24] !== '' && parseNum(row2[24]) !== 0;
             hasDeposited2 = row2[25] !== undefined && row2[25] !== null && row2[25] !== '' && parseNum(row2[25]) !== 0;
 
-            const sumOfCounts2 = topDrawerTotal2 + coinsTotal2 + cashTotal2;
-            baselineTotal2 = sumOfCounts2 - receivedVal2 + depositedVal2;
+            baselineTotal2 = topDrawerTotal2 + coinsTotal2 + cashTotal2 - receivedVal2 + depositedVal2;
             baselineWithTills2 = baselineTotal2 + 1500;
-
-            physicalTotal2 = sumOfCounts2;
+            physicalTotal2 = topDrawerTotal2 + coinsTotal2 + cashTotal2;
             physicalWithTills2 = physicalTotal2 + 1500;
         }
 
         const showReceived = hasReceived1 || hasReceived2;
         const showDeposited = hasDeposited1 || hasDeposited2;
+
+        // Detect if we are doing a shift handoff comparison (one has a deposit, the other has a receive)
+        const isHandoffComparison = row2 && ((hasDeposited1 && hasReceived2) || (hasReceived1 && hasDeposited2));
 
         let statsHTML = `<div class="form-section"><h3>Stats</h3><table>`;
         if (showReceived) {
@@ -1171,38 +1169,45 @@
             statsHTML += `<tr><td style="font-weight: 600; width: 35%;">Deposited</td>${getCellContent(25)}</tr>`;
         }
         
-        // Base "Total" (Reconstructed baseline)
-        statsHTML += getStatRowHTML("Total", baselineTotal1.toFixed(2), row2 ? baselineTotal2.toFixed(2) : null, row2);
-        
-        // Conditional physical totals
-        if (showReceived && !showDeposited) {
-            let val2 = (row2 && hasReceived2) ? physicalTotal2.toFixed(2) : "-";
-            statsHTML += getStatRowHTML("Total After Received", physicalTotal1.toFixed(2), val2, row2);
-        } else if (showDeposited && !showReceived) {
-            let val2 = (row2 && hasDeposited2) ? physicalTotal2.toFixed(2) : "-";
-            statsHTML += getStatRowHTML("Total After Deposit", physicalTotal1.toFixed(2), val2, row2);
-        } else if (showReceived && showDeposited) {
-            let val2 = (row2 && (hasReceived2 || hasDeposited2)) ? physicalTotal2.toFixed(2) : "-";
-            statsHTML += getStatRowHTML("Total After Adjusted", physicalTotal1.toFixed(2), val2, row2);
-        }
+        if (isHandoffComparison) {
+            // Handoff Mode: Compare the Night's physical leftover (after deposit) to the Morning's starting point (before receive)
+            let handoffVal1 = hasDeposited1 ? physicalTotal1 : baselineTotal1;
+            let handoffVal2 = hasDeposited2 ? physicalTotal2 : baselineTotal2;
+            statsHTML += getStatRowHTML("Total On Handoff", handoffVal1.toFixed(2), handoffVal2.toFixed(2), row2);
 
-        // Base "Total With Tills"
-        statsHTML += getStatRowHTML("Total With Tills", baselineWithTills1.toFixed(2), row2 ? baselineWithTills2.toFixed(2) : null, row2);
+            let handoffTills1 = handoffVal1 + 1500;
+            let handoffTills2 = handoffVal2 + 1500;
+            statsHTML += getStatRowHTML("Total With Tills On Handoff", handoffTills1.toFixed(2), handoffTills2.toFixed(2), row2);
+        } else {
+            // Standard Normal Comparison / Single View Mode
+            statsHTML += getStatRowHTML("Total", baselineTotal1.toFixed(2), row2 ? baselineTotal2.toFixed(2) : null, row2);
+            
+            if (showReceived && !showDeposited) {
+                let val2 = (row2 && hasReceived2) ? physicalTotal2.toFixed(2) : "-";
+                statsHTML += getStatRowHTML("Total After Received", physicalTotal1.toFixed(2), val2, row2);
+            } else if (showDeposited && !showReceived) {
+                let val2 = (row2 && hasDeposited2) ? physicalTotal2.toFixed(2) : "-";
+                statsHTML += getStatRowHTML("Total After Deposit", physicalTotal1.toFixed(2), val2, row2);
+            } else if (showReceived && showDeposited) {
+                let val2 = (row2 && (hasReceived2 || hasDeposited2)) ? physicalTotal2.toFixed(2) : "-";
+                statsHTML += getStatRowHTML("Total After Adjusted", physicalTotal1.toFixed(2), val2, row2);
+            }
 
-        // Conditional physical totals with tills
-        if (showReceived && !showDeposited) {
-            let val2 = (row2 && hasReceived2) ? physicalWithTills2.toFixed(2) : "-";
-            statsHTML += getStatRowHTML("Total With Tills After Received", physicalWithTills1.toFixed(2), val2, row2);
-        } else if (showDeposited && !showReceived) {
-            let val2 = (row2 && hasDeposited2) ? physicalWithTills2.toFixed(2) : "-";
-            statsHTML += getStatRowHTML("Total With Tills After Deposit", physicalWithTills1.toFixed(2), val2, row2);
-        } else if (showReceived && showDeposited) {
-            let val2 = (row2 && (hasReceived2 || hasDeposited2)) ? physicalWithTills2.toFixed(2) : "-";
-            statsHTML += getStatRowHTML("Total With Tills After Adjusted", physicalWithTills1.toFixed(2), val2, row2);
+            statsHTML += getStatRowHTML("Total With Tills", baselineWithTills1.toFixed(2), row2 ? baselineWithTills2.toFixed(2) : null, row2);
+
+            if (showReceived && !showDeposited) {
+                let val2 = (row2 && hasReceived2) ? physicalWithTills2.toFixed(2) : "-";
+                statsHTML += getStatRowHTML("Total With Tills After Received", physicalWithTills1.toFixed(2), val2, row2);
+            } else if (showDeposited && !showReceived) {
+                let val2 = (row2 && hasDeposited2) ? physicalWithTills2.toFixed(2) : "-";
+                statsHTML += getStatRowHTML("Total With Tills After Deposit", physicalWithTills1.toFixed(2), val2, row2);
+            } else if (showReceived && showDeposited) {
+                let val2 = (row2 && (hasReceived2 || hasDeposited2)) ? physicalWithTills2.toFixed(2) : "-";
+                statsHTML += getStatRowHTML("Total With Tills After Adjusted", physicalWithTills1.toFixed(2), val2, row2);
+            }
         }
 
         statsHTML += `</table></div>`;
-
         displayDiv.innerHTML = topDrawerHTML + coinsHTML + cashHTML + tillsHTML + bagsHTML + statsHTML;
     }
 
