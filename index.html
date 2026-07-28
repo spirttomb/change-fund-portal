@@ -1030,7 +1030,9 @@
             } else {
                 let val2 = row2[index];
                 let disp2 = (val2 !== undefined && val2 !== null && val2 !== '') ? val2 : '-';
-                let isDiff = String(val1).trim() !== String(val2).trim();
+                
+                // If either value is missing ("-"), do not flag as a red difference
+                let isDiff = (disp1 !== '-' && disp2 !== '-') && (String(val1).trim() !== String(val2).trim());
                 let diffStyle = isDiff ? `color: var(--diff-color); font-weight: bold;` : (customColor ? `color: ${customColor};` : '');
                 
                 return `<td><div class="compare-row"><span class="compare-val" style="text-align: right; ${diffStyle}">${disp1}</span><span class="compare-vs">vs</span><span class="compare-val" style="text-align: left; ${diffStyle}">${disp2}</span></div></td>`;
@@ -1205,10 +1207,11 @@
     }
 
     function getStatRowHTML(label, val1, val2, hasRow2) {
-        if (!hasRow2) {
+        if (!hasRow2 || val2 === null || val2 === undefined) {
             return `<tr><td style="font-weight: 700; width: 35%; color: var(--primary);">${label}</td><td style="font-weight: 700; color: var(--primary); text-align: center;">${val1}</td></tr>`;
         } else {
-            let isDiff = val1 !== val2;
+            // If val2 is "-", do not treat it as a numerical mismatch error style
+            let isDiff = (val1 !== '-' && val2 !== '-') && (val1 !== val2);
             let diffStyle = isDiff ? `color: var(--diff-color); font-weight: bold;` : `color: var(--primary); font-weight: 700;`;
             return `<tr><td style="font-weight: 700; width: 35%; color: var(--primary);">${label}</td><td><div class="compare-row"><span class="compare-val" style="text-align: right; ${diffStyle}">${val1}</span><span class="compare-vs">vs</span><span class="compare-val" style="text-align: left; ${diffStyle}">${val2}</span></div></td></tr>`;
         }
