@@ -494,7 +494,7 @@
                             <div class="custom-decimal-wrapper">
                                 <span class="custom-decimal-prefix">150.</span>
                                 <input type="text" maxlength="2" inputmode="numeric" placeholder="00" class="custom-decimal-input" value="">
-                                <input type="hidden" name="entry.1689010264" class="custom-decimal-hidden mandatory-input" value="150.00">
+                                <input type="hidden" name="entry.1689010264" class="custom-decimal-hidden mandatory-input" value="">
                             </div>
                         </div>
                         <div class="form-group">
@@ -502,7 +502,7 @@
                             <div class="custom-decimal-wrapper">
                                 <span class="custom-decimal-prefix">150.</span>
                                 <input type="text" maxlength="2" inputmode="numeric" placeholder="00" class="custom-decimal-input" value="">
-                                <input type="hidden" name="entry.406607956" class="custom-decimal-hidden mandatory-input" value="150.00">
+                                <input type="hidden" name="entry.406607956" class="custom-decimal-hidden mandatory-input" value="">
                             </div>
                         </div>
                         <div class="form-group">
@@ -510,7 +510,7 @@
                             <div class="custom-decimal-wrapper">
                                 <span class="custom-decimal-prefix">150.</span>
                                 <input type="text" maxlength="2" inputmode="numeric" placeholder="00" class="custom-decimal-input" value="">
-                                <input type="hidden" name="entry.2100128588" class="custom-decimal-hidden mandatory-input" value="150.00">
+                                <input type="hidden" name="entry.2100128588" class="custom-decimal-hidden mandatory-input" value="">
                             </div>
                         </div>
                         <div class="form-group">
@@ -518,7 +518,7 @@
                             <div class="custom-decimal-wrapper">
                                 <span class="custom-decimal-prefix">150.</span>
                                 <input type="text" maxlength="2" inputmode="numeric" placeholder="00" class="custom-decimal-input" value="">
-                                <input type="hidden" name="entry.510240632" class="custom-decimal-hidden mandatory-input" value="150.00">
+                                <input type="hidden" name="entry.510240632" class="custom-decimal-hidden mandatory-input" value="">
                             </div>
                         </div>
                         <div class="form-group">
@@ -526,7 +526,7 @@
                             <div class="custom-decimal-wrapper">
                                 <span class="custom-decimal-prefix">150.</span>
                                 <input type="text" maxlength="2" inputmode="numeric" placeholder="00" class="custom-decimal-input" value="">
-                                <input type="hidden" name="entry.1241719748" class="custom-decimal-hidden mandatory-input" value="150.00">
+                                <input type="hidden" name="entry.1241719748" class="custom-decimal-hidden mandatory-input" value="">
                             </div>
                         </div>
                     </div>
@@ -541,7 +541,7 @@
                             <div class="custom-decimal-wrapper">
                                 <span class="custom-decimal-prefix">150.</span>
                                 <input type="text" maxlength="2" inputmode="numeric" placeholder="00" class="custom-decimal-input" value="">
-                                <input type="hidden" name="entry.557609349" class="custom-decimal-hidden mandatory-input" value="150.00">
+                                <input type="hidden" name="entry.557609349" class="custom-decimal-hidden mandatory-input" value="">
                             </div>
                         </div>
                         <div class="form-group">
@@ -549,7 +549,7 @@
                             <div class="custom-decimal-wrapper">
                                 <span class="custom-decimal-prefix">150.</span>
                                 <input type="text" maxlength="2" inputmode="numeric" placeholder="00" class="custom-decimal-input" value="">
-                                <input type="hidden" name="entry.874061341" class="custom-decimal-hidden mandatory-input" value="150.00">
+                                <input type="hidden" name="entry.874061341" class="custom-decimal-hidden mandatory-input" value="">
                             </div>
                         </div>
                         <div class="form-group">
@@ -557,7 +557,7 @@
                             <div class="custom-decimal-wrapper">
                                 <span class="custom-decimal-prefix">150.</span>
                                 <input type="text" maxlength="2" inputmode="numeric" placeholder="00" class="custom-decimal-input" value="">
-                                <input type="hidden" name="entry.1215915283" class="custom-decimal-hidden mandatory-input" value="150.00">
+                                <input type="hidden" name="entry.1215915283" class="custom-decimal-hidden mandatory-input" value="">
                             </div>
                         </div>
                         <div class="form-group">
@@ -565,7 +565,7 @@
                             <div class="custom-decimal-wrapper">
                                 <span class="custom-decimal-prefix">150.</span>
                                 <input type="text" maxlength="2" inputmode="numeric" placeholder="00" class="custom-decimal-input" value="">
-                                <input type="hidden" name="entry.2066716551" class="custom-decimal-hidden mandatory-input" value="150.00">
+                                <input type="hidden" name="entry.2066716551" class="custom-decimal-hidden mandatory-input" value="">
                             </div>
                         </div>
                         <div class="form-group">
@@ -573,7 +573,7 @@
                             <div class="custom-decimal-wrapper">
                                 <span class="custom-decimal-prefix">150.</span>
                                 <input type="text" maxlength="2" inputmode="numeric" placeholder="00" class="custom-decimal-input" value="">
-                                <input type="hidden" name="entry.352372494" class="custom-decimal-hidden mandatory-input" value="150.00">
+                                <input type="hidden" name="entry.352372494" class="custom-decimal-hidden mandatory-input" value="">
                             </div>
                         </div>
                     </div>
@@ -812,7 +812,7 @@
                 let val = textInput.value.replace(/\D/g, '').slice(0, 2);
                 textInput.value = val;
                 if (val === '') {
-                    hiddenInput.value = '150.00';
+                    hiddenInput.value = '';
                 } else if (val.length === 1) {
                     hiddenInput.value = `150.${val}0`;
                 } else {
@@ -1352,7 +1352,7 @@
             errors.push("Please select an employee name.");
         }
 
-        // 2. Validate all mandatory number inputs
+        // 2. Validate all mandatory number inputs (including tills and bags since they have .mandatory-input)
         const mandatoryInputs = form.querySelectorAll('.mandatory-input');
         mandatoryInputs.forEach(input => {
             if (input.value === '' || isNaN(input.value)) {
@@ -1414,7 +1414,6 @@
         `;
         warningDiv.style.display = 'block';
         
-        // Changed this line to scroll to the warning box instead of the top of the page
         warningDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
         document.getElementById('btn-submit-anyway').addEventListener('click', async () => {
@@ -1449,8 +1448,6 @@
             successMessage.style.display = 'block';
             globalSheetData = []; // Clear cache so the view tab re-fetches latest updates
 
-            // The entry we just submitted becomes the new baseline for the next entry's live tracker,
-            // without needing to wait on Google Sheets to finish processing.
             previousEntryTotal = currentTotal;
             discrepancyAcknowledged = false;
             const combinedBtn = document.getElementById('btn-copy-and-open');
@@ -1491,7 +1488,7 @@
             const textInput = wrapper.querySelector('.custom-decimal-input');
             const hiddenInput = wrapper.querySelector('.custom-decimal-hidden');
             textInput.value = '';
-            hiddenInput.value = '150.00';
+            hiddenInput.value = '';
         });
         document.getElementById('group-received').classList.remove('visible');
         document.getElementById('group-deposited').classList.remove('visible');
