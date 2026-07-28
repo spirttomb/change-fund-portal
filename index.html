@@ -1178,33 +1178,49 @@
             statsHTML += getStatRowHTML("Total", baselineTotal1.toFixed(2), row2 ? baselineTotal2.toFixed(2) : null, row2);
             
             if (showReceived && !showDeposited) {
-            let val1 = hasReceived1 ? physicalTotal1.toFixed(2) : baselineTotal1.toFixed(2);
-            let val2 = row2 ? (hasReceived2 ? physicalTotal2.toFixed(2) : baselineTotal2.toFixed(2)) : "-";
-            let labelName = hasReceived1 ? "Total After Received" : "Total After Received"; // Or keep standard labeling
-            statsHTML += getStatRowHTML("Total After Received", val1, val2, row2);
-        } else if (showDeposited && !showReceived) {
-            let val1 = hasDeposited1 ? physicalTotal1.toFixed(2) : baselineTotal1.toFixed(2);
-            let val2 = row2 ? (hasDeposited2 ? physicalTotal2.toFixed(2) : baselineTotal2.toFixed(2)) : "-";
-            statsHTML += getStatRowHTML("Total After Deposit", val1, val2, row2);
-        } else if (showReceived && showDeposited) {
-            let val2 = (row2 && (hasReceived2 || hasDeposited2)) ? physicalTotal2.toFixed(2) : "-";
-            statsHTML += getStatRowHTML("Total After Adjusted", physicalTotal1.toFixed(2), val2, row2);
-        }
+                let val1 = hasReceived1 ? physicalTotal1.toFixed(2) : (row2 ? "-" : baselineTotal1.toFixed(2));
+                let val2 = row2 ? (hasReceived2 ? physicalTotal2.toFixed(2) : "-") : null;
+                // If neither row has the receive value displayed on that specific line, fall back safely
+                if (!hasReceived1 && row2 && !hasReceived2) {
+                    val1 = baselineTotal1.toFixed(2);
+                    val2 = baselineTotal2.toFixed(2);
+                }
+                statsHTML += getStatRowHTML("Total After Received", val1, val2, row2);
+            } else if (showDeposited && !showReceived) {
+                let val1 = hasDeposited1 ? physicalTotal1.toFixed(2) : (row2 ? "-" : baselineTotal1.toFixed(2));
+                let val2 = row2 ? (hasDeposited2 ? physicalTotal2.toFixed(2) : "-") : null;
+                if (!hasDeposited1 && row2 && !hasDeposited2) {
+                    val1 = baselineTotal1.toFixed(2);
+                    val2 = baselineTotal2.toFixed(2);
+                }
+                statsHTML += getStatRowHTML("Total After Deposit", val1, val2, row2);
+            } else if (showReceived && showDeposited) {
+                let val2 = (row2 && (hasReceived2 || hasDeposited2)) ? physicalTotal2.toFixed(2) : "-";
+                statsHTML += getStatRowHTML("Total After Adjusted", physicalTotal1.toFixed(2), val2, row2);
+            }
 
-        statsHTML += getStatRowHTML("Total With Tills", baselineWithTills1.toFixed(2), row2 ? baselineWithTills2.toFixed(2) : null, row2);
+            statsHTML += getStatRowHTML("Total With Tills", baselineWithTills1.toFixed(2), row2 ? baselineWithTills2.toFixed(2) : null, row2);
 
-        if (showReceived && !showDeposited) {
-            let val1 = hasReceived1 ? physicalWithTills1.toFixed(2) : baselineWithTills1.toFixed(2);
-            let val2 = row2 ? (hasReceived2 ? physicalWithTills2.toFixed(2) : baselineWithTills2.toFixed(2)) : "-";
-            statsHTML += getStatRowHTML("Total With Tills After Received", val1, val2, row2);
-        } else if (showDeposited && !showReceived) {
-            let val1 = hasDeposited1 ? physicalWithTills1.toFixed(2) : baselineWithTills1.toFixed(2);
-            let val2 = row2 ? (hasDeposited2 ? physicalWithTills2.toFixed(2) : baselineWithTills2.toFixed(2)) : "-";
-            statsHTML += getStatRowHTML("Total With Tills After Deposit", val1, val2, row2);
-        } else if (showReceived && showDeposited) {
-            let val2 = (row2 && (hasReceived2 || hasDeposited2)) ? physicalWithTills2.toFixed(2) : "-";
-            statsHTML += getStatRowHTML("Total With Tills After Adjusted", physicalWithTills1.toFixed(2), val2, row2);
-        }
+            if (showReceived && !showDeposited) {
+                let val1 = hasReceived1 ? physicalWithTills1.toFixed(2) : (row2 ? "-" : baselineWithTills1.toFixed(2));
+                let val2 = row2 ? (hasReceived2 ? physicalWithTills2.toFixed(2) : "-") : null;
+                if (!hasReceived1 && row2 && !hasReceived2) {
+                    val1 = baselineWithTills1.toFixed(2);
+                    val2 = baselineWithTills2.toFixed(2);
+                }
+                statsHTML += getStatRowHTML("Total With Tills After Received", val1, val2, row2);
+            } else if (showDeposited && !showReceived) {
+                let val1 = hasDeposited1 ? physicalWithTills1.toFixed(2) : (row2 ? "-" : baselineWithTills1.toFixed(2));
+                let val2 = row2 ? (hasDeposited2 ? physicalWithTills2.toFixed(2) : "-") : null;
+                if (!hasDeposited1 && row2 && !hasDeposited2) {
+                    val1 = baselineWithTills1.toFixed(2);
+                    val2 = baselineWithTills2.toFixed(2);
+                }
+                statsHTML += getStatRowHTML("Total With Tills After Deposit", val1, val2, row2);
+            } else if (showReceived && showDeposited) {
+                let val2 = (row2 && (hasReceived2 || hasDeposited2)) ? physicalWithTills2.toFixed(2) : "-";
+                statsHTML += getStatRowHTML("Total With Tills After Adjusted", physicalWithTills1.toFixed(2), val2, row2);
+            }
         }
 
         statsHTML += `</table></div>`;
