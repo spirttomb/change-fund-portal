@@ -736,11 +736,10 @@
     function computeRowGrandTotal(row) {
         const sumIdx = (idxs) => idxs.reduce((acc, i) => acc + parseNum(row[i]), 0);
         const sumOfCounts = sumIdx(SHEET_COL_TOP_DRAWER) + sumIdx(SHEET_COL_COINS) + sumIdx(SHEET_COL_CASH);
-        const received = parseNum(row[SHEET_COL_RECEIVED]);
-        const deposited = parseNum(row[SHEET_COL_DEPOSITED]);
-        return sumOfCounts + received - deposited;
+        
+        // The baseline for the *next* entry is exactly what was left physically in the drawer
+        return sumOfCounts;
     }
-
     // Loads sheet data (if not already cached) purely to establish the "previous total" baseline for the live tracker.
     async function loadPreviousEntryTotalIfNeeded() {
         if (globalSheetData.length === 0) {
@@ -1128,10 +1127,17 @@
         const hasDeposited1 = row1[25] !== undefined && row1[25] !== null && row1[25] !== '' && parseNum(row1[25]) !== 0;
         
         const sumOfCounts1 = topDrawerTotal1 + coinsTotal1 + cashTotal1;
-        const grandTotal1 = sumOfCounts1 + receivedVal1 - depositedVal1;
-        const totalWithTills1 = sumOfCounts1 + 1500;
+        
+        // Reconstruct baseline so the primary "Total" matches the previous log's expected amount
+        const baselineTotal1 = sumOfCounts1 - receivedVal1 + depositedVal1;
+        const baselineWithTills1 = baselineTotal1 + 1500;
 
-        let grandTotal2 = 0, totalWithTills2 = 0;
+        // Physical totals represent what is actually inside the drawer right now
+        const physicalTotal1 = sumOfCounts1;
+        const physicalWithTills1 = physicalTotal1 + 1500;
+
+        let baselineTotal2 = 0, baselineWithTills2 = 0;
+        let physicalTotal2 = 0, physicalWithTills2 = 0;
         let receivedVal2 = 0, depositedVal2 = 0;
         let hasReceived2 = false, hasDeposited2 = false;
 
@@ -1145,8 +1151,11 @@
             hasDeposited2 = row2[25] !== undefined && row2[25] !== null && row2[25] !== '' && parseNum(row2[25]) !== 0;
 
             const sumOfCounts2 = topDrawerTotal2 + coinsTotal2 + cashTotal2;
-            grandTotal2 = sumOfCounts2 + receivedVal2 - depositedVal2;
-            totalWithTills2 = sumOfCounts2 + 1500;
+            baselineTotal2 = sumOfCounts2 - receivedVal2 + depositedVal2;
+            baselineWithTills2 = baselineTotal2 + 1500;
+
+            physicalTotal2 = sumOfCounts2;
+            physicalWithTills2 = physicalTotal2 + 1500;
         }
 
         const showReceived = hasReceived1 || hasReceived2;
@@ -1160,20 +1169,36 @@
             statsHTML += `<tr><td style="font-weight: 600; width: 35%;">Deposited</td>${getCellContent(25)}</tr>`;
         }
         
-        statsHTML += getStatRowHTML("Total", grandTotal1.toFixed(2), grandTotal2.toFixed(2), row2);
+        // Base "Total" (Reconstructed baseline)
+        statsHTML += getStatRowHTML("Total", baselineTotal1.toFixed(2), row2 ? baselineTotal2.toFixed(2) : null, row2);
         
-        if (showReceived) {
-            let totalBeforeReceived1 = grandTotal1 - receivedVal1;
-            let totalBeforeReceived2 = grandTotal2 - receivedVal2;
-            statsHTML += getStatRowHTML("Total Before Received", totalBeforeReceived1.toFixed(2), totalBeforeReceived2.toFixed(2), row2);
-        }
-        if (showDeposited) {
-            let totalBeforeDeposit1 = grandTotal1 + depositedVal1;
-            let totalBeforeDeposit2 = grandTotal2 + depositedVal2;
-            statsHTML += getStatRowHTML("Total Before Deposit", totalBeforeDeposit1.toFixed(2), totalBeforeDeposit2.toFixed(2), row2);
+        // Conditional physical totals
+        if (showReceived && !showDeposited) {
+            let val2 = (row2 && hasReceived2) ? physicalTotal2.toFixed(2) : "-";
+            statsHTML += getStatRowHTML("Total After Received", physicalTotal1.toFixed(2), val2, row2);
+        } else if (showDeposited && !showReceived) {
+            let val2 = (row2 && hasDeposited2) ? physicalTotal2.toFixed(2) : "-";
+            statsHTML += getStatRowHTML("Total After Deposit", physicalTotal1.toFixed(2), val2, row2);
+        } else if (showReceived && showDeposited) {
+            let val2 = (row2 && (hasReceived2 || hasDeposited2)) ? physicalTotal2.toFixed(2) : "-";
+            statsHTML += getStatRowHTML("Total After Adjusted", physicalTotal1.toFixed(2), val2, row2);
         }
 
-        statsHTML += getStatRowHTML("Total With Tills", totalWithTills1.toFixed(2), totalWithTills2.toFixed(2), row2);
+        // Base "Total With Tills"
+        statsHTML += getStatRowHTML("Total With Tills", baselineWithTills1.toFixed(2), row2 ? baselineWithTills2.toFixed(2) : null, row2);
+
+        // Conditional physical totals with tills
+        if (showReceived && !showDeposited) {
+            let val2 = (row2 && hasReceived2) ? physicalWithTills2.toFixed(2) : "-";
+            statsHTML += getStatRowHTML("Total With Tills After Received", physicalWithTills1.toFixed(2), val2, row2);
+        } else if (showDeposited && !showReceived) {
+            let val2 = (row2 && hasDeposited2) ? physicalWithTills2.toFixed(2) : "-";
+            statsHTML += getStatRowHTML("Total With Tills After Deposit", physicalWithTills1.toFixed(2), val2, row2);
+        } else if (showReceived && showDeposited) {
+            let val2 = (row2 && (hasReceived2 || hasDeposited2)) ? physicalWithTills2.toFixed(2) : "-";
+            statsHTML += getStatRowHTML("Total With Tills After Adjusted", physicalWithTills1.toFixed(2), val2, row2);
+        }
+
         statsHTML += `</table></div>`;
 
         displayDiv.innerHTML = topDrawerHTML + coinsHTML + cashHTML + tillsHTML + bagsHTML + statsHTML;
@@ -1219,8 +1244,11 @@
         const hasDeposited = depositedInputVal !== undefined && depositedInputVal !== null && depositedInputVal !== '' && depositedVal !== 0;
 
         const sumOfCounts = topDrawerTotal + coinsTotal + cashTotal;
-        const grandTotal = sumOfCounts + receivedVal - depositedVal;
-        const totalWithTills = sumOfCounts + 1500;
+        const baselineTotal = sumOfCounts - receivedVal + depositedVal;
+        const baselineWithTills = baselineTotal + 1500;
+        
+        const physicalTotal = sumOfCounts;
+        const physicalWithTills = physicalTotal + 1500;
 
         let statsHTML = `<div class="form-section"><h3>Stats</h3><table>`;
         
@@ -1231,18 +1259,26 @@
             statsHTML += `<tr><td style="font-weight: 600; width: 35%;">Deposited</td><td style="text-align: center;"><span>${depositedVal.toFixed(2)}</span></td></tr>`;
         }
         
-        statsHTML += `<tr><td style="font-weight: 700; width: 35%; color: var(--primary);">Total</td><td style="font-weight: 700; color: var(--primary); text-align: center;">${grandTotal.toFixed(2)}</td></tr>`;
+        statsHTML += `<tr><td style="font-weight: 700; width: 35%; color: var(--primary);">Total</td><td style="font-weight: 700; color: var(--primary); text-align: center;">${baselineTotal.toFixed(2)}</td></tr>`;
         
-        if (hasReceived) {
-            let totalBeforeReceived = grandTotal - receivedVal;
-            statsHTML += `<tr><td style="font-weight: 700; width: 35%; color: var(--primary);">Total Before Received</td><td style="font-weight: 700; color: var(--primary); text-align: center;">${totalBeforeReceived.toFixed(2)}</td></tr>`;
-        }
-        if (hasDeposited) {
-            let totalBeforeDeposit = grandTotal + depositedVal;
-            statsHTML += `<tr><td style="font-weight: 700; width: 35%; color: var(--primary);">Total Before Deposit</td><td style="font-weight: 700; color: var(--primary); text-align: center;">${totalBeforeDeposit.toFixed(2)}</td></tr>`;
+        if (hasReceived && !hasDeposited) {
+            statsHTML += `<tr><td style="font-weight: 700; width: 35%; color: var(--primary);">Total After Received</td><td style="font-weight: 700; color: var(--primary); text-align: center;">${physicalTotal.toFixed(2)}</td></tr>`;
+        } else if (hasDeposited && !hasReceived) {
+            statsHTML += `<tr><td style="font-weight: 700; width: 35%; color: var(--primary);">Total After Deposit</td><td style="font-weight: 700; color: var(--primary); text-align: center;">${physicalTotal.toFixed(2)}</td></tr>`;
+        } else if (hasReceived && hasDeposited) {
+            statsHTML += `<tr><td style="font-weight: 700; width: 35%; color: var(--primary);">Total After Adjusted</td><td style="font-weight: 700; color: var(--primary); text-align: center;">${physicalTotal.toFixed(2)}</td></tr>`;
         }
 
-        statsHTML += `<tr><td style="font-weight: 700; width: 35%; color: var(--primary);">Total With Tills</td><td style="font-weight: 700; color: var(--primary); text-align: center;">${totalWithTills.toFixed(2)}</td></tr>`;
+        statsHTML += `<tr><td style="font-weight: 700; width: 35%; color: var(--primary);">Total With Tills</td><td style="font-weight: 700; color: var(--primary); text-align: center;">${baselineWithTills.toFixed(2)}</td></tr>`;
+
+        if (hasReceived && !hasDeposited) {
+            statsHTML += `<tr><td style="font-weight: 700; width: 35%; color: var(--primary);">Total With Tills After Received</td><td style="font-weight: 700; color: var(--primary); text-align: center;">${physicalWithTills.toFixed(2)}</td></tr>`;
+        } else if (hasDeposited && !hasReceived) {
+            statsHTML += `<tr><td style="font-weight: 700; width: 35%; color: var(--primary);">Total With Tills After Deposit</td><td style="font-weight: 700; color: var(--primary); text-align: center;">${physicalWithTills.toFixed(2)}</td></tr>`;
+        } else if (hasReceived && hasDeposited) {
+            statsHTML += `<tr><td style="font-weight: 700; width: 35%; color: var(--primary);">Total With Tills After Adjusted</td><td style="font-weight: 700; color: var(--primary); text-align: center;">${physicalWithTills.toFixed(2)}</td></tr>`;
+        }
+
         statsHTML += `</table></div>`;
 
         document.getElementById('success-stats-container').innerHTML = statsHTML;
