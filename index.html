@@ -756,7 +756,7 @@
     }
 
     // Reads the current form inputs and computes the live "Current Total" the same way the Stats section does.
-    function getLiveTotals() {
+   function getLiveTotals() {
         const sumFieldGroup = (names) => names.reduce((acc, name) => {
             const el = form.querySelector(`[name="${name}"]`);
             return acc + parseNum(el ? el.value : 0);
@@ -769,7 +769,8 @@
         const receivedVal = receivedChecked ? parseNum(document.getElementById('input-received').value) : 0;
         const depositedVal = depositedChecked ? parseNum(document.getElementById('input-deposited').value) : 0;
 
-        const currentTotal = currentSumOfCounts + receivedVal - depositedVal;
+        // Changed this line: currentTotal is just the physical count in the drawer
+        const currentTotal = currentSumOfCounts;
 
         return { currentSumOfCounts, receivedVal, depositedVal, currentTotal };
     }
