@@ -1175,11 +1175,6 @@
             let handoffTills2 = handoffVal2 + 1500;
             statsHTML += getStatRowHTML("Total With Tills On Handoff", handoffTills1.toFixed(2), handoffTills2.toFixed(2), row2);
         } else {
-            // Main Total row uses physical total if a deposit occurred
-            let mainTotal1 = showDeposited && !showReceived ? physicalTotal1.toFixed(2) : baselineTotal1.toFixed(2);
-            let mainTotal2 = row2 ? (showDeposited && !showReceived ? (hasDeposited2 ? physicalTotal2.toFixed(2) : baselineTotal2.toFixed(2)) : baselineTotal2.toFixed(2)) : null;
-            statsHTML += getStatRowHTML("Total", mainTotal1, mainTotal2, row2);
-            
             if (showReceived && !showDeposited) {
                 let val1 = hasReceived1 ? physicalTotal1.toFixed(2) : (row2 ? "-" : baselineTotal1.toFixed(2));
                 let val2 = row2 ? (hasReceived2 ? physicalTotal2.toFixed(2) : "-") : null;
@@ -1187,21 +1182,31 @@
                     val1 = baselineTotal1.toFixed(2);
                     val2 = baselineTotal2.toFixed(2);
                 }
+                statsHTML += getStatRowHTML("Total", baselineTotal1.toFixed(2), row2 ? baselineTotal2.toFixed(2) : null, row2);
                 statsHTML += getStatRowHTML("Total After Received", val1, val2, row2);
             } else if (showDeposited && !showReceived) {
-                let val1 = hasDeposited1 ? baselineTotal1.toFixed(2) : (row2 ? "-" : baselineTotal1.toFixed(2));
-                let val2 = row2 ? (hasDeposited2 ? baselineTotal2.toFixed(2) : "-") : null;
-                statsHTML += getStatRowHTML("Total Before Deposit", val1, val2, row2);
+                // Dynamically handle whichever side has the deposit
+                if (hasDeposited1 && !hasDeposited2) {
+                    // Deposit is on the Left
+                    statsHTML += getStatRowHTML("Total", baselineTotal1.toFixed(2), baselineTotal2.toFixed(2), row2);
+                    statsHTML += getStatRowHTML("Total After Deposit", physicalTotal1.toFixed(2), "-", row2);
+                } else if (hasDeposited2 && !hasDeposited1) {
+                    // Deposit is on the Right
+                    statsHTML += getStatRowHTML("Total", physicalTotal1.toFixed(2), physicalTotal2.toFixed(2), row2);
+                    statsHTML += getStatRowHTML("Total Before Deposit", "-", baselineTotal2.toFixed(2), row2);
+                } else {
+                    // Both or neither have a deposit
+                    statsHTML += getStatRowHTML("Total", baselineTotal1.toFixed(2), row2 ? baselineTotal2.toFixed(2) : null, row2);
+                }
             } else if (showReceived && showDeposited) {
+                statsHTML += getStatRowHTML("Total", baselineTotal1.toFixed(2), row2 ? baselineTotal2.toFixed(2) : null, row2);
                 let val2 = (row2 && (hasReceived2 || hasDeposited2)) ? physicalTotal2.toFixed(2) : "-";
                 statsHTML += getStatRowHTML("Total After Adjusted", physicalTotal1.toFixed(2), val2, row2);
+            } else {
+                statsHTML += getStatRowHTML("Total", baselineTotal1.toFixed(2), row2 ? baselineTotal2.toFixed(2) : null, row2);
             }
 
-            // Main Total With Tills row uses physical total + tills if a deposit occurred
-            let mainTills1 = showDeposited && !showReceived ? physicalWithTills1.toFixed(2) : baselineWithTills1.toFixed(2);
-            let mainTills2 = row2 ? (showDeposited && !showReceived ? (hasDeposited2 ? physicalWithTills2.toFixed(2) : baselineWithTills2.toFixed(2)) : baselineWithTills2.toFixed(2)) : null;
-            statsHTML += getStatRowHTML("Total With Tills", mainTills1, mainTills2, row2);
-
+            // Tills section mirroring the main totals directionally
             if (showReceived && !showDeposited) {
                 let val1 = hasReceived1 ? physicalWithTills1.toFixed(2) : (row2 ? "-" : baselineWithTills1.toFixed(2));
                 let val2 = row2 ? (hasReceived2 ? physicalWithTills2.toFixed(2) : "-") : null;
@@ -1209,14 +1214,24 @@
                     val1 = baselineWithTills1.toFixed(2);
                     val2 = baselineWithTills2.toFixed(2);
                 }
+                statsHTML += getStatRowHTML("Total With Tills", baselineWithTills1.toFixed(2), row2 ? baselineWithTills2.toFixed(2) : null, row2);
                 statsHTML += getStatRowHTML("Total With Tills After Received", val1, val2, row2);
             } else if (showDeposited && !showReceived) {
-                let val1 = hasDeposited1 ? baselineWithTills1.toFixed(2) : (row2 ? "-" : baselineWithTills1.toFixed(2));
-                let val2 = row2 ? (hasDeposited2 ? baselineWithTills2.toFixed(2) : "-") : null;
-                statsHTML += getStatRowHTML("Total With Tills Before Deposit", val1, val2, row2);
+                if (hasDeposited1 && !hasDeposited2) {
+                    statsHTML += getStatRowHTML("Total With Tills", baselineWithTills1.toFixed(2), baselineWithTills2.toFixed(2), row2);
+                    statsHTML += getStatRowHTML("Total With Tills After Deposit", physicalWithTills1.toFixed(2), "-", row2);
+                } else if (hasDeposited2 && !hasDeposited1) {
+                    statsHTML += getStatRowHTML("Total With Tills", physicalWithTills1.toFixed(2), physicalWithTills2.toFixed(2), row2);
+                    statsHTML += getStatRowHTML("Total With Tills Before Deposit", "-", baselineWithTills2.toFixed(2), row2);
+                } else {
+                    statsHTML += getStatRowHTML("Total With Tills", baselineWithTills1.toFixed(2), row2 ? baselineWithTills2.toFixed(2) : null, row2);
+                }
             } else if (showReceived && showDeposited) {
+                statsHTML += getStatRowHTML("Total With Tills", baselineWithTills1.toFixed(2), row2 ? baselineWithTills2.toFixed(2) : null, row2);
                 let val2 = (row2 && (hasReceived2 || hasDeposited2)) ? physicalWithTills2.toFixed(2) : "-";
                 statsHTML += getStatRowHTML("Total With Tills After Adjusted", physicalWithTills1.toFixed(2), val2, row2);
+            } else {
+                statsHTML += getStatRowHTML("Total With Tills", baselineWithTills1.toFixed(2), row2 ? baselineWithTills2.toFixed(2) : null, row2);
             }
         }
 
