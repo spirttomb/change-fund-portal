@@ -768,7 +768,7 @@
         const receivedVal = receivedChecked ? parseNum(document.getElementById('input-received').value) : 0;
         const depositedVal = depositedChecked ? parseNum(document.getElementById('input-deposited').value) : 0;
 
-        // Changed this line: currentTotal is just the physical count in the drawer
+        // currentTotal is just the physical count in the drawer
         const currentTotal = currentSumOfCounts;
 
         return { currentSumOfCounts, receivedVal, depositedVal, currentTotal };
@@ -813,8 +813,6 @@
                 textInput.value = val;
                 if (val === '') {
                     hiddenInput.value = '';
-                } else if (val.length === 1) {
-                    hiddenInput.value = `150.${val}0`;
                 } else {
                     hiddenInput.value = `150.${val}`;
                 }
@@ -1157,7 +1155,6 @@
         const showReceived = hasReceived1 || hasReceived2;
         const showDeposited = hasDeposited1 || hasDeposited2;
 
-        // Helper to extract date with a 4:00 AM business day cutoff
         const getRowDate = (r) => {
             if (!r) return null;
             for (let i = 0; i < 3; i++) {
@@ -1165,7 +1162,6 @@
                     const parsed = Date.parse(r[i]);
                     if (!isNaN(parsed)) {
                         let d = new Date(parsed);
-                        // Shift back 4 hours so 12:00 AM - 3:59 AM map to the previous day
                         d.setHours(d.getHours() - 4);
                         return d.toDateString();
                     }
@@ -1178,7 +1174,6 @@
         const date2 = getRowDate(row2);
         const isSameDay = row2 && date1 && date2 && date1 === date2;
 
-        // True Handoff: Cross-day comparison based on the 4 AM cutoff rule
         const isHandoffComparison = row2 && !isSameDay && ((hasDeposited1 && hasReceived2) || (hasReceived1 && hasDeposited2) || (hasDeposited1 && !hasDeposited2 && !hasReceived2) || (!hasDeposited1 && hasDeposited2 && !hasReceived1));
 
         let statsHTML = `<div class="form-section"><h3>Stats</h3><table>`;
@@ -1237,7 +1232,6 @@
         if (!hasRow2 || val2 === null || val2 === undefined) {
             return `<tr><td style="font-weight: 700; width: 35%; color: var(--primary);">${label}</td><td style="font-weight: 700; color: var(--primary); text-align: center;">${val1}</td></tr>`;
         } else {
-            // If val2 is "-", do not treat it as a numerical mismatch error style
             let isDiff = (val1 !== '-' && val2 !== '-') && (val1 !== val2);
             let diffStyle = isDiff ? `color: var(--diff-color); font-weight: bold;` : `color: var(--primary); font-weight: 700;`;
             return `<tr><td style="font-weight: 700; width: 35%; color: var(--primary);">${label}</td><td><div class="compare-row"><span class="compare-val" style="text-align: right; ${diffStyle}">${val1}</span><span class="compare-vs">vs</span><span class="compare-val" style="text-align: left; ${diffStyle}">${val2}</span></div></td></tr>`;
@@ -1319,11 +1313,10 @@
         const dropdown = document.getElementById('record-dropdown');
         dropdown.innerHTML = '<option value="">Loading latest entry...</option>';
         
-        // Wait 1.5 seconds for Google Sheets to process the background form submission
         setTimeout(async () => {
             await fetchSheetData();
             if (dropdown.options.length > 1) {
-                dropdown.selectedIndex = 1; // index 0 is the placeholder; newest entry is now first in the list
+                dropdown.selectedIndex = 1;
                 displayRecordData();
             }
         }, 1500);
@@ -1352,7 +1345,7 @@
             errors.push("Please select an employee name.");
         }
 
-        // 2. Validate all mandatory number inputs (including tills and bags since they have .mandatory-input)
+        // 2. Validate all mandatory number inputs
         const mandatoryInputs = form.querySelectorAll('.mandatory-input');
         mandatoryInputs.forEach(input => {
             if (input.value === '' || isNaN(input.value)) {
@@ -1361,7 +1354,17 @@
             }
         });
 
-        // 3. Validate optional received/deposited fields if their checkboxes are checked and values are entered
+        // 3. Validate custom decimal inputs for length (must specify hundreds place / 2 digits)
+        document.querySelectorAll('.custom-decimal-wrapper').forEach(wrapper => {
+            const textInput = wrapper.querySelector('.custom-decimal-input');
+            const label = wrapper.closest('.form-group').querySelector('label').textContent;
+            
+            if (textInput.value.length === 1) {
+                errors.push(`The entry for "${label}" must specify the hundreds place (two digits). Entering a single digit is ambiguous (could mean .09 or .90).`);
+            }
+        });
+
+        // 4. Validate optional received/deposited fields if their checkboxes are checked
         const receivedCheck = document.getElementById('check-received');
         const receivedInput = document.getElementById('input-received');
         if (receivedCheck.checked && receivedInput.value !== '' && isNaN(receivedInput.value)) {
@@ -1382,8 +1385,7 @@
             return;
         }
 
-        // 4. Reconciliation check: does the counted total match what's expected from the last entry
-        //    (adjusted for anything received or deposited this round)?
+        // 5. Reconciliation check
         if (!discrepancyAcknowledged && previousEntryTotal !== null) {
             const { receivedVal, depositedVal, currentTotal } = getLiveTotals();
             const expectedTotal = previousEntryTotal + receivedVal - depositedVal;
@@ -1446,7 +1448,7 @@
             renderSuccessStats();
             formContainer.style.display = 'none';
             successMessage.style.display = 'block';
-            globalSheetData = []; // Clear cache so the view tab re-fetches latest updates
+            globalSheetData = [];
 
             previousEntryTotal = currentTotal;
             discrepancyAcknowledged = false;
@@ -1457,7 +1459,7 @@
                         .then(() => {
                             const originalText = this.innerHTML;
                             this.innerHTML = 'Copied!';
-                            this.style.backgroundColor = '#15803d'; // Green success color
+                            this.style.backgroundColor = '#15803d';
                             
                             setTimeout(() => {
                                 this.innerHTML = originalText;
@@ -1483,7 +1485,6 @@
 
     function resetForm() {
         form.reset();
-        // Reset custom decimal fields for bags and tills
         document.querySelectorAll('.custom-decimal-wrapper').forEach(wrapper => {
             const textInput = wrapper.querySelector('.custom-decimal-input');
             const hiddenInput = wrapper.querySelector('.custom-decimal-hidden');
