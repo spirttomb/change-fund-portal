@@ -726,10 +726,10 @@
     const COIN_FIELD_NAMES = ['entry.521101649', 'entry.718207412', 'entry.890888806', 'entry.1565754101'];
     const CASH_FIELD_NAMES = ['entry.252905748', 'entry.1524898992', 'entry.989973404'];
 
-    // Same column indices used elsewhere in the sheet-reading code (Top Drawer + Coins + Cash + Received - Deposited)
-    const SHEET_COL_TOP_DRAWER = [2, 3, 7, 8, 9];
-    const SHEET_COL_COINS = [10, 11, 12, 13];
-    const SHEET_COL_CASH = [4, 5, 6];
+        // Same column indices used elsewhere in the sheet-reading code
+    const SHEET_COL_TOP_DRAWER = [2, 3, 4, 5, 6];
+    const SHEET_COL_COINS = [7, 8, 9, 10];
+    const SHEET_COL_CASH = [11, 12, 13];
     const SHEET_COL_RECEIVED = 24;
     const SHEET_COL_DEPOSITED = 25;
 
@@ -1042,9 +1042,9 @@
         const topDrawerFields = [
             { label: "500 Bundles", index: 2 },
             { label: "100 Bundles", index: 3 },
-            { label: "Boxes of Quarters", index: 7 },
-            { label: "Boxes of Dimes", index: 8 },
-            { label: "Boxes of Nickles", index: 9 }
+            { label: "Boxes of Quarters", index: 4 },
+            { label: "Boxes of Dimes", index: 5 },
+            { label: "Boxes of Nickles", index: 6 }
         ];
         let topDrawerTotal1 = 0;
         let topDrawerHTML = `<div class="form-section"><h3>Top Drawer</h3><table>`;
@@ -1056,10 +1056,10 @@
 
         // Category 2: Coins
         const coinFields = [
-            { label: "Rolls of Quarters", index: 10 },
-            { label: "Rolls of Dimes", index: 11 },
-            { label: "Rolls of Nickles", index: 12 },
-            { label: "Pennies", index: 13 }
+            { label: "Rolls of Quarters", index: 7 },
+            { label: "Rolls of Dimes", index: 8 },
+            { label: "Rolls of Nickles", index: 9 },
+            { label: "Pennies", index: 10 }
         ];
         let coinsTotal1 = 0;
         let coinsHTML = `<div class="form-section"><h3>Coins</h3><table>`;
@@ -1071,9 +1071,9 @@
 
         // Category 3: Cash
         const cashFields = [
-            { label: "Singles", index: 6 },
-            { label: "Fives", index: 5 },
-            { label: "Large Bills", index: 4 }
+            { label: "Singles", index: 11 },
+            { label: "Fives", index: 12 },
+            { label: "Large Bills", index: 13 }
         ];
         let cashTotal1 = 0;
         let cashHTML = `<div class="form-section"><h3>Cash</h3><table>`;
