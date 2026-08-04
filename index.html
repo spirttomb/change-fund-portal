@@ -57,6 +57,7 @@
 
         .tab-buttons {
             display: flex;
+            flex-wrap: wrap;
             gap: 10px;
             margin-bottom: 25px;
             border-bottom: 2px solid var(--border);
@@ -254,6 +255,16 @@
                 grid-template-columns: 1fr;
             }
 
+            .tab-buttons {
+                gap: 8px;
+            }
+
+            .tab-buttons button {
+                flex: 1 1 45%;
+                font-size: 0.85rem;
+                padding: 10px 6px;
+            }
+
             th, td {
                 padding: 8px 6px;
                 font-size: 0.9rem;
@@ -426,6 +437,8 @@
     <div class="tab-buttons">
         <button id="btn-submit" class="active" onclick="switchTab('submit')">New Log Entry</button>
         <button id="btn-view" onclick="switchTab('view')">View Log</button>
+        <button id="btn-deposit" onclick="switchTab('deposit')">Enter Deposit</button>
+        <button id="btn-received" onclick="switchTab('received')">Enter Received</button>
     </div>
 
     <!-- PANEL 1: SUBMIT NEW ENTRY FORM -->
@@ -579,29 +592,6 @@
                     </div>
                 </div>
 
-                <!-- Stats -->
-                <div class="form-section">
-                    <h3>Received/Deposited</h3>
-                    <div style="display: flex; flex-direction: column; gap: 15px; width: 100%;">
-                        <div class="stat-toggle-row">
-                            <label class="stat-toggle-label">
-                                <input type="checkbox" id="check-received" onchange="toggleStatField('received')"> Change Fund Received
-                            </label>
-                            <div class="form-group conditional-group" id="group-received">
-                                <input type="number" step="any" name="entry.1389957960" id="input-received" placeholder="Received amount">
-                            </div>
-                        </div>
-                        <div class="stat-toggle-row">
-                            <label class="stat-toggle-label">
-                                <input type="checkbox" id="check-deposited" onchange="toggleStatField('deposited')"> Change Fund Deposited
-                            </label>
-                            <div class="form-group conditional-group" id="group-deposited">
-                                <input type="number" step="any" name="entry.423453157" id="input-deposited" placeholder="Deposited amount">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Live Total Tracker -->
                 <div class="form-section">
                     <h3>Totals</h3>
@@ -628,6 +618,10 @@
         </div>
         <div style="display: flex; justify-content: center; margin-top: 20px;">
             <button type="button" class="action-btn" id="btn-copy-and-open" style="margin-top: 0; width: auto; padding: 10px 20px; background-color: var(--card-bg); color: #ffffff;">Copy Total & Open Inform ↗</button>
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: center; margin-top: 12px; flex-wrap: wrap;">
+            <button onclick="attachAmountToJustSubmitted('deposit')" class="action-btn" style="width: auto; padding: 10px 20px; background-color: var(--card-bg); color: var(--text-main); margin-top: 0;">Attach a Deposit Amount</button>
+            <button onclick="attachAmountToJustSubmitted('received')" class="action-btn" style="width: auto; padding: 10px 20px; background-color: var(--card-bg); color: var(--text-main); margin-top: 0;">Attach a Received Amount</button>
         </div>
         
     </div>
@@ -709,6 +703,100 @@
             <!-- Categorized breakdown / comparison will appear here -->
         </div>
     </div>
+
+    <!-- PANEL 3: QUICK DEPOSIT / RECEIVED ENTRY -->
+    <div id="panel-quick" class="panel">
+        <div id="quick-form-container">
+            <h1 id="quick-entry-title">Enter Deposit</h1>
+
+            <div id="quick-entry-error" style="display:none; background-color:#fee2e2; border:1px solid #ef4444; color:#b91c1c; padding:12px; border-radius:6px; margin-bottom:20px; font-weight:600;"></div>
+
+            <!-- Employee -->
+            <div class="form-section">
+                <h3>Employee Info</h3>
+                <div class="form-group">
+                    <label>Name</label>
+                    <select id="quick-employee-name">
+                        <option value="">Select your name...</option>
+                        <option value="Emma">Emma</option>
+                        <option value="Fawn">Fawn</option>
+                        <option value="Jaida">Jaida</option>
+                        <option value="Josh">Josh</option>
+                        <option value="Kendal">Kendal</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Deposit Amount -->
+            <div class="form-section" id="quick-deposit-section">
+                <h3>Deposit Amount <span class="section-subtitle">Removed From Large Bills</span></h3>
+                <div class="form-group">
+                    <label>Amount Deposited</label>
+                    <input type="number" step="any" id="quick-deposit-amount" placeholder="0.00" oninput="renderQuickPreview()">
+                </div>
+            </div>
+
+            <!-- Received Breakdown -->
+            <div class="form-section" id="quick-received-section" style="display:none;">
+                <h3>Received <span class="section-subtitle">Enter The Value Amount</span></h3>
+                <div class="grid">
+                    <div class="form-group"><label>500 Bundles</label><input type="number" step="any" id="quick-received-500bundles" placeholder="0.00" oninput="renderQuickPreview()"></div>
+                    <div class="form-group"><label>100 Bundles</label><input type="number" step="any" id="quick-received-100bundles" placeholder="0.00" oninput="renderQuickPreview()"></div>
+                    <div class="form-group"><label>Boxes of Quarters</label><input type="number" step="any" id="quick-received-quarters" placeholder="0.00" oninput="renderQuickPreview()"></div>
+                    <div class="form-group"><label>Boxes of Dimes</label><input type="number" step="any" id="quick-received-dimes" placeholder="0.00" oninput="renderQuickPreview()"></div>
+                    <div class="form-group"><label>Boxes of Nickles</label><input type="number" step="any" id="quick-received-nickles" placeholder="0.00" oninput="renderQuickPreview()"></div>
+                </div>
+            </div>
+
+            <!-- Entry Selector -->
+            <div class="form-section">
+                <h3>Apply To Entry</h3>
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <div class="filter-grid-primary">
+                        <div class="form-group">
+                            <label>Filter by Name</label>
+                            <select id="quick-filter-name" onchange="populateQuickDropdown()">
+                                <option value="">All Names</option>
+                                <option value="Emma">Emma</option>
+                                <option value="Fawn">Fawn</option>
+                                <option value="Jaida">Jaida</option>
+                                <option value="Josh">Josh</option>
+                                <option value="Kendal">Kendal</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Filter by Date</label>
+                            <input type="text" id="quick-filter-date" placeholder="All Dates" onfocus="this.type='date'" onblur="if(!this.value)this.type='text'" onchange="populateQuickDropdown()">
+                        </div>
+                        <div class="form-group" style="align-self: end;">
+                            <button type="button" class="action-btn" style="margin-top:0; padding: 10px 15px; background-color: var(--card-bg); color: var(--text-main);" onclick="clearQuickFilters()">Reset</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Select Entry</label>
+                        <select id="quick-entry-dropdown" onchange="renderQuickPreview()">
+                            <option value="">Select an entry...</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div id="quick-entry-preview"></div>
+
+            <button type="button" class="action-btn" id="quick-submit-btn" onclick="submitQuickEntry()">Submit Deposit</button>
+        </div>
+
+        <!-- Success Message -->
+        <div id="quick-success-message" style="display:none;">
+            <h2 style="color: var(--text-dark);">Successfully Logged!</h2>
+            <p id="quick-success-text" style="color: var(--text-dark);"></p>
+            <div id="quick-success-stats" style="text-align: left; margin-top: 20px;"></div>
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px; flex-wrap: wrap;">
+                <button onclick="resetQuickEntry()" class="action-btn" style="width: auto; padding: 10px 20px; background-color: var(--card-bg); color: var(--text-main); margin-top: 0;">Enter Another</button>
+                <button onclick="viewSubmittedEntry()" class="action-btn" style="width: auto; padding: 10px 20px; background-color: var(--card-bg); color: var(--text-main); margin-top: 0;">View Entry in Log Viewer</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -725,13 +813,23 @@
     const TOP_DRAWER_FIELD_NAMES = ['entry.1517829846', 'entry.1744081617', 'entry.898907270', 'entry.1372868115', 'entry.884010152'];
     const COIN_FIELD_NAMES = ['entry.521101649', 'entry.718207412', 'entry.890888806', 'entry.1565754101'];
     const CASH_FIELD_NAMES = ['entry.252905748', 'entry.1524898992', 'entry.989973404'];
+    const TILL_FIELD_NAMES = ['entry.1689010264', 'entry.406607956', 'entry.2100128588', 'entry.510240632', 'entry.1241719748'];
+    const BAG_FIELD_NAMES = ['entry.557609349', 'entry.874061341', 'entry.1215915283', 'entry.2066716551', 'entry.352372494'];
+    const EMPLOYEE_NAME_FIELD = 'entry.2093033292';
+    const RECEIVED_FIELD = 'entry.1389957960';
+    const DEPOSITED_FIELD = 'entry.423453157';
 
         // Same column indices used elsewhere in the sheet-reading code
     const SHEET_COL_TOP_DRAWER = [2, 3, 4, 5, 6];
     const SHEET_COL_COINS = [7, 8, 9, 10];
     const SHEET_COL_CASH = [11, 12, 13];
+    const SHEET_COL_TILLS = [19, 20, 21, 22, 23];
+    const SHEET_COL_BAGS = [14, 15, 16, 17, 18];
     const SHEET_COL_RECEIVED = 24;
     const SHEET_COL_DEPOSITED = 25;
+
+    // Which quick-entry flow is active: 'deposit' or 'received'
+    let quickEntryMode = 'deposit';
 
     function computeRowGrandTotal(row) {
         const sumIdx = (idxs) => idxs.reduce((acc, i) => acc + parseNum(row[i]), 0);
@@ -763,15 +861,10 @@
 
         const currentSumOfCounts = sumFieldGroup(TOP_DRAWER_FIELD_NAMES) + sumFieldGroup(COIN_FIELD_NAMES) + sumFieldGroup(CASH_FIELD_NAMES);
 
-        const receivedChecked = document.getElementById('check-received').checked;
-        const depositedChecked = document.getElementById('check-deposited').checked;
-        const receivedVal = receivedChecked ? parseNum(document.getElementById('input-received').value) : 0;
-        const depositedVal = depositedChecked ? parseNum(document.getElementById('input-deposited').value) : 0;
-
         // currentTotal is just the physical count in the drawer
         const currentTotal = currentSumOfCounts;
 
-        return { currentSumOfCounts, receivedVal, depositedVal, currentTotal };
+        return { currentSumOfCounts, currentTotal };
     }
 
     function updateLiveTracker() {
@@ -783,15 +876,14 @@
             return;
         }
 
-        const { receivedVal, depositedVal, currentTotal } = getLiveTotals();
-        const expectedTotal = previousEntryTotal + receivedVal - depositedVal;
+        const { currentTotal } = getLiveTotals();
+        const expectedTotal = previousEntryTotal;
         const diff = currentTotal - expectedTotal;
         const isMatch = Math.abs(diff) < 0.005;
-        const adjustedNote = (receivedVal || depositedVal) ? ' (adjusted for received/deposited)' : '';
 
         trackerContent.innerHTML = `
             <table>
-                <tr><td style="font-weight: 600;">Expected Total${adjustedNote}</td><td style="text-align: center;">$${expectedTotal.toFixed(2)}</td></tr>
+                <tr><td style="font-weight: 600;">Expected Total</td><td style="text-align: center;">$${expectedTotal.toFixed(2)}</td></tr>
                 <tr><td style="font-weight: 700; color: var(--primary);">Your Current Total</td><td style="text-align: center; font-weight: 700; color: ${isMatch ? 'var(--primary)' : 'var(--diff-color)'};">$${currentTotal.toFixed(2)}</td></tr>
                 <tr>
                     <td colspan="2" style="text-align:center; font-weight: 600; color: ${isMatch ? '#15803d' : 'var(--diff-color)'}; border-bottom: none; padding-top: 15px;">
@@ -844,26 +936,21 @@
         }
     });
 
-    function toggleStatField(field) {
-        const checkbox = document.getElementById(`check-${field}`);
-        const group = document.getElementById(`group-${field}`);
-        const input = document.getElementById(`input-${field}`);
-        if (checkbox.checked) {
-            group.classList.add('visible');
-        } else {
-            group.classList.remove('visible');
-            input.value = '';
-        }
-    }
-
-    function switchTab(tab) {
+    function switchTab(tab, opts = {}) {
         document.getElementById('panel-submit').classList.toggle('active', tab === 'submit');
         document.getElementById('panel-view').classList.toggle('active', tab === 'view');
+        document.getElementById('panel-quick').classList.toggle('active', tab === 'deposit' || tab === 'received');
         document.getElementById('btn-submit').classList.toggle('active', tab === 'submit');
         document.getElementById('btn-view').classList.toggle('active', tab === 'view');
-        
+        document.getElementById('btn-deposit').classList.toggle('active', tab === 'deposit');
+        document.getElementById('btn-received').classList.toggle('active', tab === 'received');
+
         if (tab === 'view' && globalSheetData.length === 0) {
             fetchSheetData();
+        }
+
+        if (tab === 'deposit' || tab === 'received') {
+            initQuickEntry(tab, !!opts.preselectMostRecent);
         }
     }
 
@@ -1364,19 +1451,6 @@
             }
         });
 
-        // 4. Validate optional received/deposited fields if their checkboxes are checked
-        const receivedCheck = document.getElementById('check-received');
-        const receivedInput = document.getElementById('input-received');
-        if (receivedCheck.checked && receivedInput.value !== '' && isNaN(receivedInput.value)) {
-            errors.push('The "Received" field must be a valid number if provided.');
-        }
-
-        const depositedCheck = document.getElementById('check-deposited');
-        const depositedInput = document.getElementById('input-deposited');
-        if (depositedCheck.checked && depositedInput.value !== '' && isNaN(depositedInput.value)) {
-            errors.push('The "Deposited" field must be a valid number if provided.');
-        }
-
         // If any error exists, prevent submission and display reasons
         if (errors.length > 0) {
             errorDiv.innerHTML = '<strong>Please fix the following issues before submitting:</strong><ul style="margin: 5px 0 0 20px; padding: 0;">' + errors.map(err => `<li>${err}</li>`).join('') + '</ul>';
@@ -1385,10 +1459,10 @@
             return;
         }
 
-        // 5. Reconciliation check
+        // 4. Reconciliation check
         if (!discrepancyAcknowledged && previousEntryTotal !== null) {
-            const { receivedVal, depositedVal, currentTotal } = getLiveTotals();
-            const expectedTotal = previousEntryTotal + receivedVal - depositedVal;
+            const { currentTotal } = getLiveTotals();
+            const expectedTotal = previousEntryTotal;
             const diff = currentTotal - expectedTotal;
 
             if (Math.abs(diff) >= 0.005) {
@@ -1491,8 +1565,6 @@
             textInput.value = '';
             hiddenInput.value = '';
         });
-        document.getElementById('group-received').classList.remove('visible');
-        document.getElementById('group-deposited').classList.remove('visible');
         errorDiv.style.display = 'none';
         warningDiv.style.display = 'none';
         warningDiv.innerHTML = '';
@@ -1501,6 +1573,285 @@
         formContainer.style.display = 'block';
         window.scrollTo(0, 0);
         updateLiveTracker();
+    }
+
+    // ==== Quick Entry (Enter Deposit / Enter Received) ====
+    // These flows clone an existing log entry and apply just the deposit or
+    // received difference to it, rather than requiring a full manual recount.
+
+    function initQuickEntry(mode, preselectMostRecent = false) {
+        quickEntryMode = mode;
+
+        document.getElementById('quick-entry-title').textContent = mode === 'deposit' ? 'Enter Deposit' : 'Enter Received';
+        document.getElementById('quick-deposit-section').style.display = mode === 'deposit' ? 'block' : 'none';
+        document.getElementById('quick-received-section').style.display = mode === 'received' ? 'block' : 'none';
+        document.getElementById('quick-submit-btn').textContent = mode === 'deposit' ? 'Submit Deposit' : 'Submit Received';
+
+        document.getElementById('quick-form-container').style.display = 'block';
+        document.getElementById('quick-success-message').style.display = 'none';
+        document.getElementById('quick-entry-error').style.display = 'none';
+        document.getElementById('quick-entry-error').innerHTML = '';
+        document.getElementById('quick-entry-preview').innerHTML = '';
+
+        document.getElementById('quick-employee-name').value = '';
+        document.getElementById('quick-deposit-amount').value = '';
+        ['500bundles', '100bundles', 'quarters', 'dimes', 'nickles'].forEach(suffix => {
+            document.getElementById(`quick-received-${suffix}`).value = '';
+        });
+
+        document.getElementById('quick-filter-name').value = '';
+        const dateFilter = document.getElementById('quick-filter-date');
+        dateFilter.value = '';
+        dateFilter.type = 'text';
+        document.getElementById('quick-entry-dropdown').innerHTML = '<option value="">Select an entry...</option>';
+
+        if (globalSheetData.length === 0) {
+            fetchSheetData().then(() => {
+                populateQuickDropdown();
+                if (preselectMostRecent) selectMostRecentQuickEntry();
+            });
+        } else {
+            populateQuickDropdown();
+            if (preselectMostRecent) selectMostRecentQuickEntry();
+        }
+    }
+
+    // Reuses the same generic dropdown-population logic as the Log Viewer tab
+    function populateQuickDropdown() {
+        populateSingleDropdown('quick-entry-dropdown', 'quick-filter-name', 'quick-filter-date', 'Select an entry...');
+    }
+
+    // Selects the newest entry in the quick-entry dropdown (options are ordered newest-first)
+    function selectMostRecentQuickEntry() {
+        const dropdown = document.getElementById('quick-entry-dropdown');
+        if (dropdown.options.length > 1) {
+            dropdown.selectedIndex = 1;
+            renderQuickPreview();
+        }
+    }
+
+    // Jumps straight from the "Successfully Logged!" screen into Enter Deposit/Received
+    // with the entry that was just submitted already selected.
+    function attachAmountToJustSubmitted(mode) {
+        globalSheetData = []; // force a fresh fetch so the entry just submitted is included
+        switchTab(mode, { preselectMostRecent: true });
+    }
+
+    function clearQuickFilters() {
+        document.getElementById('quick-filter-name').value = '';
+        const dateFilter = document.getElementById('quick-filter-date');
+        dateFilter.value = '';
+        dateFilter.type = 'text';
+        populateQuickDropdown();
+        renderQuickPreview();
+    }
+
+    function getQuickReceivedValues() {
+        return {
+            b500: parseNum(document.getElementById('quick-received-500bundles').value),
+            b100: parseNum(document.getElementById('quick-received-100bundles').value),
+            q: parseNum(document.getElementById('quick-received-quarters').value),
+            d: parseNum(document.getElementById('quick-received-dimes').value),
+            n: parseNum(document.getElementById('quick-received-nickles').value)
+        };
+    }
+
+    function renderQuickPreview() {
+        const idx = document.getElementById('quick-entry-dropdown').value;
+        const previewDiv = document.getElementById('quick-entry-preview');
+        if (!idx || !globalSheetData[idx]) {
+            previewDiv.innerHTML = '';
+            return;
+        }
+        const row = globalSheetData[idx];
+
+        if (quickEntryMode === 'deposit') {
+            const amt = parseNum(document.getElementById('quick-deposit-amount').value);
+            const currentLargeBills = parseNum(row[13]);
+            const newLargeBills = currentLargeBills - amt;
+            const afterStyle = newLargeBills < 0 ? 'color: var(--diff-color);' : 'color: var(--primary);';
+
+            previewDiv.innerHTML = `
+                <div class="form-section"><h3>Preview</h3><table>
+                    <tr><td style="font-weight: 600; width: 45%;">Large Bills (Before)</td><td style="text-align: center;">$${currentLargeBills.toFixed(2)}</td></tr>
+                    <tr><td style="font-weight: 600; width: 45%;">Deposit Amount</td><td style="text-align: center; color: var(--diff-color);">- $${amt.toFixed(2)}</td></tr>
+                    <tr><td style="font-weight: 700; width: 45%; ${afterStyle}">Large Bills (After)</td><td style="font-weight: 700; text-align: center; ${afterStyle}">$${newLargeBills.toFixed(2)}</td></tr>
+                </table></div>`;
+        } else {
+            const v = getQuickReceivedValues();
+            const rows = [
+                { label: '500 Bundles', idx: 2, add: v.b500 },
+                { label: '100 Bundles', idx: 3, add: v.b100 },
+                { label: 'Boxes of Quarters', idx: 4, add: v.q },
+                { label: 'Boxes of Dimes', idx: 5, add: v.d },
+                { label: 'Boxes of Nickles', idx: 6, add: v.n }
+            ];
+            const totalReceived = v.b500 + v.b100 + v.q + v.d + v.n;
+
+            const rowsHTML = rows.map(r => {
+                const before = parseNum(row[r.idx]);
+                const after = before + r.add;
+                return `<tr><td style="font-weight: 600; width: 45%;">${r.label}</td><td style="text-align: center;">$${before.toFixed(2)} &rarr; $${after.toFixed(2)}</td></tr>`;
+            }).join('');
+
+            previewDiv.innerHTML = `
+                <div class="form-section"><h3>Preview</h3><table>
+                    ${rowsHTML}
+                    <tr><td style="font-weight: 700; width: 45%; color: var(--primary);">Total Received</td><td style="font-weight: 700; text-align: center; color: var(--primary);">$${totalReceived.toFixed(2)}</td></tr>
+                </table></div>`;
+        }
+    }
+
+    async function submitQuickEntry() {
+        const errorDiv = document.getElementById('quick-entry-error');
+        errorDiv.style.display = 'none';
+        errorDiv.innerHTML = '';
+
+        const name = document.getElementById('quick-employee-name').value;
+        const idx = document.getElementById('quick-entry-dropdown').value;
+        let errors = [];
+
+        if (!name) errors.push('Please select your name.');
+        if (!idx || !globalSheetData[idx]) errors.push('Please select which entry to apply this to.');
+
+        let amt = 0;
+        let receivedVals = { b500: 0, b100: 0, q: 0, d: 0, n: 0 };
+        let totalReceived = 0;
+
+        if (quickEntryMode === 'deposit') {
+            const amountInput = document.getElementById('quick-deposit-amount');
+            amt = parseNum(amountInput.value);
+            if (amountInput.value === '' || isNaN(amountInput.value) || amt <= 0) {
+                errors.push('Please enter a valid deposit amount.');
+            }
+        } else {
+            receivedVals = getQuickReceivedValues();
+            totalReceived = receivedVals.b500 + receivedVals.b100 + receivedVals.q + receivedVals.d + receivedVals.n;
+            if (totalReceived <= 0) {
+                errors.push('Please enter at least one received amount (bundles or boxes).');
+            }
+        }
+
+        if (errors.length > 0) {
+            errorDiv.innerHTML = '<strong>Please fix the following issues:</strong><ul style="margin: 5px 0 0 20px; padding: 0;">' + errors.map(e => `<li>${e}</li>`).join('') + '</ul>';
+            errorDiv.style.display = 'block';
+            return;
+        }
+
+        const row = globalSheetData[idx];
+        const fd = new FormData();
+        fd.append(EMPLOYEE_NAME_FIELD, name);
+
+        // Top Drawer - clone, adding received deltas if this is a "received" entry
+        const receivedDeltas = quickEntryMode === 'received'
+            ? [receivedVals.b500, receivedVals.b100, receivedVals.q, receivedVals.d, receivedVals.n]
+            : [0, 0, 0, 0, 0];
+        TOP_DRAWER_FIELD_NAMES.forEach((fname, i) => {
+            const base = parseNum(row[SHEET_COL_TOP_DRAWER[i]]);
+            fd.append(fname, (base + receivedDeltas[i]).toString());
+        });
+
+        // Coins - clone unchanged
+        COIN_FIELD_NAMES.forEach((fname, i) => {
+            fd.append(fname, parseNum(row[SHEET_COL_COINS[i]]).toString());
+        });
+
+        // Cash - clone, reducing Large Bills if this is a "deposit" entry
+        CASH_FIELD_NAMES.forEach((fname, i) => {
+            let val = parseNum(row[SHEET_COL_CASH[i]]);
+            if (quickEntryMode === 'deposit' && i === CASH_FIELD_NAMES.length - 1) {
+                val -= amt;
+            }
+            fd.append(fname, val.toString());
+        });
+
+        // Tills - clone verbatim
+        TILL_FIELD_NAMES.forEach((fname, i) => {
+            const val = row[SHEET_COL_TILLS[i]];
+            fd.append(fname, (val !== undefined && val !== null) ? val.toString() : '');
+        });
+
+        // Bags - clone verbatim
+        BAG_FIELD_NAMES.forEach((fname, i) => {
+            const val = row[SHEET_COL_BAGS[i]];
+            fd.append(fname, (val !== undefined && val !== null) ? val.toString() : '');
+        });
+
+        // Received / Deposited stat fields
+        if (quickEntryMode === 'deposit') {
+            fd.append(RECEIVED_FIELD, '');
+            fd.append(DEPOSITED_FIELD, amt.toString());
+        } else {
+            fd.append(RECEIVED_FIELD, totalReceived.toString());
+            fd.append(DEPOSITED_FIELD, '');
+        }
+
+        const submitBtnQuick = document.getElementById('quick-submit-btn');
+        const originalBtnText = submitBtnQuick.textContent;
+        submitBtnQuick.textContent = 'Submitting...';
+        submitBtnQuick.disabled = true;
+
+        try {
+            await fetch(GOOGLE_FORM_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: fd
+            });
+
+            // Keep the main form's live tracker baseline in sync with this new entry
+            const originalTotal = computeRowGrandTotal(row);
+            previousEntryTotal = quickEntryMode === 'deposit' ? originalTotal - amt : originalTotal + totalReceived;
+            discrepancyAcknowledged = false;
+            globalSheetData = [];
+            updateLiveTracker();
+
+            document.getElementById('quick-form-container').style.display = 'none';
+            document.getElementById('quick-success-message').style.display = 'block';
+
+            const successText = document.getElementById('quick-success-text');
+            const successStats = document.getElementById('quick-success-stats');
+
+            if (quickEntryMode === 'deposit') {
+                const before = parseNum(row[13]);
+                const after = before - amt;
+                successText.textContent = `A deposit of $${amt.toFixed(2)} has been recorded and removed from Large Bills.`;
+                successStats.innerHTML = `<div class="form-section"><h3>Summary</h3><table>
+                    <tr><td style="font-weight: 600; width: 45%;">Large Bills (Before)</td><td style="text-align: center;">$${before.toFixed(2)}</td></tr>
+                    <tr><td style="font-weight: 700; width: 45%; color: var(--primary);">Large Bills (After)</td><td style="font-weight: 700; text-align: center; color: var(--primary);">$${after.toFixed(2)}</td></tr>
+                    <tr><td style="font-weight: 700; width: 45%; color: var(--primary);">Deposited</td><td style="font-weight: 700; text-align: center; color: var(--primary);">$${amt.toFixed(2)}</td></tr>
+                </table></div>`;
+            } else {
+                successText.textContent = `Received items totaling $${totalReceived.toFixed(2)} have been added.`;
+                const rows = [
+                    { label: '500 Bundles', idx: 2, add: receivedVals.b500 },
+                    { label: '100 Bundles', idx: 3, add: receivedVals.b100 },
+                    { label: 'Boxes of Quarters', idx: 4, add: receivedVals.q },
+                    { label: 'Boxes of Dimes', idx: 5, add: receivedVals.d },
+                    { label: 'Boxes of Nickles', idx: 6, add: receivedVals.n }
+                ].filter(r => r.add !== 0);
+                const rowsHTML = rows.map(r => {
+                    const before = parseNum(row[r.idx]);
+                    const after = before + r.add;
+                    return `<tr><td style="font-weight: 600; width: 45%;">${r.label}</td><td style="text-align: center;">$${before.toFixed(2)} &rarr; $${after.toFixed(2)}</td></tr>`;
+                }).join('');
+                successStats.innerHTML = `<div class="form-section"><h3>Summary</h3><table>
+                    ${rowsHTML}
+                    <tr><td style="font-weight: 700; width: 45%; color: var(--primary);">Received</td><td style="font-weight: 700; text-align: center; color: var(--primary);">$${totalReceived.toFixed(2)}</td></tr>
+                </table></div>`;
+            }
+
+        } catch (error) {
+            alert('There was an error submitting the entry. Please check your connection.');
+            console.error('Quick entry submission failed:', error);
+        } finally {
+            submitBtnQuick.textContent = originalBtnText;
+            submitBtnQuick.disabled = false;
+        }
+    }
+
+    function resetQuickEntry() {
+        initQuickEntry(quickEntryMode);
+        window.scrollTo(0, 0);
     }
 </script>
 
