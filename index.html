@@ -15,7 +15,7 @@
 
         :root {
             --primary: #003d73;
-            --primary-hover: #003d73;
+            --primary-hover: #2563eb;
             --bg: #003d73;          /* Background */
             --card-bg: #002a4f;     /* Trim / category bubbles */
             --inner-bg: #ffffff;    /* Inner background */
@@ -456,7 +456,7 @@
             </div>
 
             <form id="change-fund-form">
-                <input type="hidden" name="entry.124917104" id="modified-of-field" value="">
+                <input type="hidden" name="entry.124917104" id="modified-of-field" value="none">
 
                 <!-- Personnel -->
                 <div class="form-section">
@@ -856,6 +856,14 @@
         return String(ts || '');
     }
 
+    // "none" is the placeholder value normal (non-edit) submissions send, so the Google Form question
+    // can be marked Required without silently blocking every ordinary entry. Treat it like blank.
+    function isRealModificationValue(v) {
+        if (v === undefined || v === null) return false;
+        const s = String(v).trim();
+        return s !== '' && s.toLowerCase() !== 'none';
+    }
+
     // Which quick-entry flow is active: 'deposit' or 'received'
     let quickEntryMode = 'deposit';
 
@@ -1068,7 +1076,7 @@
         const supersededKeys = new Set();
         for (let j = 1; j < globalSheetData.length; j++) {
             const modOf = globalSheetData[j][SHEET_COL_MODIFIED_OF];
-            if (modOf !== undefined && modOf !== null && modOf !== '') {
+            if (isRealModificationValue(modOf)) {
                 supersededKeys.add(String(modOf).trim());
             }
         }
@@ -1101,7 +1109,7 @@
                     
                     let label = `${formattedDate} - ${properName}`;
                     const modOfVal = globalSheetData[i][SHEET_COL_MODIFIED_OF];
-                    if (modOfVal !== undefined && modOfVal !== null && modOfVal !== '') {
+                    if (isRealModificationValue(modOfVal)) {
                         label += ' - Modified';
                     }
                     
@@ -1546,8 +1554,6 @@
             </div>
         `;
         warningDiv.style.display = 'block';
-        
-        warningDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
         document.getElementById('btn-submit-anyway').addEventListener('click', async () => {
             discrepancyAcknowledged = true;
@@ -1560,6 +1566,12 @@
             warningDiv.style.display = 'none';
             warningDiv.innerHTML = '';
         });
+
+        try {
+            warningDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } catch (err) {
+            console.error('scrollIntoView failed (non-fatal):', err);
+        }
     }
 
     async function submitEntry() {
@@ -1652,7 +1664,7 @@
         editingOriginalReceived = '';
         editingOriginalDeposited = '';
         const modifiedField = document.getElementById('modified-of-field');
-        if (modifiedField) modifiedField.value = '';
+        if (modifiedField) modifiedField.value = 'none';
         const banner = document.getElementById('edit-mode-banner');
         if (banner) banner.style.display = 'none';
         if (submitBtn) submitBtn.textContent = 'Submit Entry';
