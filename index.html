@@ -1952,6 +1952,10 @@
             fd.append(DEPOSITED_FIELD, '');
         }
 
+        // Quick entries always create a brand-new row, never a correction — but the field still needs
+        // a non-empty value in case the Google Form question is set to Required.
+        fd.append(MODIFIED_OF_FIELD, 'none');
+
         const submitBtnQuick = document.getElementById('quick-submit-btn');
         const originalBtnText = submitBtnQuick.textContent;
         submitBtnQuick.textContent = 'Submitting...';
