@@ -135,6 +135,120 @@
             color: var(--text-muted);
         }
 
+
+        /* Count mode (Boxes / Rolls) */
+        .header-controls {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .count-toggle {
+            background: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--text-muted);
+            border-radius: 999px;
+            padding: 3px 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            line-height: 1.3;
+        }
+
+        .count-toggle:hover { background: rgba(255,255,255,0.12); }
+
+        .count-toggle.active {
+            background: #ffffff;
+            color: var(--primary);
+            border-color: #ffffff;
+        }
+
+        .count-stepper-wrap { display: none; }
+        .count-mode .count-stepper-wrap { display: block; width: fit-content; max-width: 100%; }
+        .count-mode .count-hidden-real { display: none; }
+
+        .count-mode .grid { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
+
+        /* Primary row: big down / value / up. Secondary row: small quiet +/-10 chips around the dollar readout. */
+        .count-stepper {
+            display: flex;
+            align-items: stretch;
+            gap: 8px;
+        }
+
+        .count-stepper input {
+            flex: 0 0 76px;
+            min-width: 0;
+            width: 76px;
+            padding-left: 4px;
+            padding-right: 4px;
+            text-align: center;
+            font-size: 1.15rem;
+            font-weight: 600;
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+
+        .count-stepper input::-webkit-outer-spin-button,
+        .count-stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+        .count-step-btn {
+            flex: 0 0 52px;
+            min-height: 46px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: #ffffff;
+            color: var(--primary);
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+            font-family: inherit;
+            touch-action: manipulation;
+        }
+
+        .count-step-btn:hover, .count-step-btn:active { background: #cfdcec; }
+
+        .count-tens {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .count-tens button {
+            flex: 0 0 auto;
+            min-width: 64px;
+            min-height: 34px;
+            border: 1px solid rgba(203, 213, 225, 0.45);
+            border-radius: 999px;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 0 10px;
+            line-height: 1;
+            font-family: inherit;
+            touch-action: manipulation;
+        }
+
+        .count-tens button:hover, .count-tens button:active { background: rgba(255,255,255,0.15); color: #ffffff; }
+
+        .count-readout {
+            flex: 1 1 auto;
+            white-space: nowrap;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            min-height: 1em;
+        }
+
         label {
             font-size: 0.875rem;
             font-weight: 600;
@@ -245,6 +359,10 @@
                 flex-wrap: wrap;
                 gap: 4px;
             }
+
+            .header-controls { justify-content: flex-start; }
+
+            .count-mode .grid { grid-template-columns: 1fr; }
 
             .grid {
                 grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -476,23 +594,23 @@
 
                 <!-- Top Drawer -->
                 <div class="form-section">
-                    <h3>Top Drawer <span class="section-subtitle">Enter The Value Amount</span></h3>
+                    <h3>Top Drawer <span class="header-controls"><span class="section-subtitle">Enter The Value Amount</span><button type="button" class="count-toggle" data-count-toggle="top-drawer" aria-pressed="false" title="Switch between entering a dollar value and a count">Enter Count</button></span></h3>
                     <div class="grid">
-                        <div class="form-group"><label>500 Bundles</label><input type="number" step="any" name="entry.1517829846" class="mandatory-input"></div>
-                        <div class="form-group"><label>100 Bundles</label><input type="number" step="any" name="entry.1744081617" class="mandatory-input"></div>
-                        <div class="form-group"><label>Boxes of Quarters</label><input type="number" step="any" name="entry.898907270" class="mandatory-input"></div>
-                        <div class="form-group"><label>Boxes of Dimes</label><input type="number" step="any" name="entry.1372868115" class="mandatory-input"></div>
-                        <div class="form-group"><label>Boxes of Nickles</label><input type="number" step="any" name="entry.884010152" class="mandatory-input"></div>
+                        <div class="form-group"><label>500 Bundles</label><input type="number" step="any" name="entry.1517829846" class="mandatory-input" data-multiplier="500"></div>
+                        <div class="form-group"><label>100 Bundles</label><input type="number" step="any" name="entry.1744081617" class="mandatory-input" data-multiplier="100"></div>
+                        <div class="form-group"><label>Boxes of Quarters</label><input type="number" step="any" name="entry.898907270" class="mandatory-input" data-multiplier="500"></div>
+                        <div class="form-group"><label>Boxes of Dimes</label><input type="number" step="any" name="entry.1372868115" class="mandatory-input" data-multiplier="250"></div>
+                        <div class="form-group"><label>Boxes of Nickles</label><input type="number" step="any" name="entry.884010152" class="mandatory-input" data-multiplier="100"></div>
                     </div>
                 </div>
 
                 <!-- Coins -->
                 <div class="form-section">
-                    <h3>Coins <span class="section-subtitle">Enter The Value Amount</span></h3>
+                    <h3>Coins <span class="header-controls"><span class="section-subtitle">Enter The Value Amount</span><button type="button" class="count-toggle" data-count-toggle="coins" aria-pressed="false" title="Switch between entering a dollar value and a count">Enter Count</button></span></h3>
                     <div class="grid">
-                        <div class="form-group"><label>Rolls of Quarters</label><input type="number" step="any" name="entry.521101649" class="mandatory-input"></div>
-                        <div class="form-group"><label>Rolls of Dimes</label><input type="number" step="any" name="entry.718207412" class="mandatory-input"></div>
-                        <div class="form-group"><label>Rolls of Nickles</label><input type="number" step="any" name="entry.890888806" class="mandatory-input"></div>
+                        <div class="form-group"><label>Rolls of Quarters</label><input type="number" step="any" name="entry.521101649" class="mandatory-input" data-ten-label="Row" data-multiplier="10"></div>
+                        <div class="form-group"><label>Rolls of Dimes</label><input type="number" step="any" name="entry.718207412" class="mandatory-input" data-ten-label="Row" data-multiplier="5"></div>
+                        <div class="form-group"><label>Rolls of Nickles</label><input type="number" step="any" name="entry.890888806" class="mandatory-input" data-ten-label="Row" data-multiplier="2"></div>
                         <div class="form-group"><label>Pennies</label><input type="number" step="any" name="entry.1565754101" class="mandatory-input"></div>
                     </div>
                 </div>
@@ -936,7 +1054,119 @@
     }
 
     // Initialize custom decimal inputs sync
+
+    // ---------- Count mode for Boxes (top drawer) and Rolls (coins) ----------
+    // The real named inputs stay the source of truth (value = count x multiplier), so submission,
+    // totals, validation and editing all keep working exactly as before. The stepper is unnamed UI.
+    const countModes = { 'top-drawer': false, 'coins': false };   // each section toggles independently
+
+    function fmtMoney(n) {
+        return '$' + (Math.round(n * 100) / 100).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+    }
+
+    function setupCountInputs() {
+        // Count entry is the default; a saved choice (per section) overrides it.
+        Object.keys(countModes).forEach(k => {
+            countModes[k] = true;
+            try {
+                const saved = localStorage.getItem('changefund-count-mode-v2-' + k);
+                if (saved !== null) countModes[k] = saved === '1';
+            } catch (e) {}
+        });
+
+        document.querySelectorAll('input[data-multiplier]').forEach(real => {
+            const mult = parseFloat(real.dataset.multiplier);
+            const tenLabel = real.dataset.tenLabel || '10';
+            const group = real.closest('.form-group');
+            const labelText = group.querySelector('label').textContent;
+            real.classList.add('count-hidden-real');
+
+            const wrap = document.createElement('div');
+            wrap.className = 'count-stepper-wrap';
+            wrap.innerHTML =
+                '<div class="count-stepper">' +
+                  '<button type="button" class="count-step-btn" tabindex="-1" aria-label="Decrease ' + labelText + ' count">&#9660;</button>' +
+                  '<input type="number" inputmode="decimal" min="0" step="any" placeholder="0" aria-label="' + labelText + ' count">' +
+                  '<button type="button" class="count-step-btn" tabindex="-1" aria-label="Increase ' + labelText + ' count">&#9650;</button>' +
+                '</div>' +
+                '<div class="count-tens">' +
+                  '<button type="button" tabindex="-1" aria-label="Decrease ' + labelText + ' count by 10">&#9660; ' + tenLabel + '</button>' +
+                  '<div class="count-readout"></div>' +
+                  '<button type="button" tabindex="-1" aria-label="Increase ' + labelText + ' count by 10">&#9650; ' + tenLabel + '</button>' +
+                '</div>';
+            group.appendChild(wrap);
+
+            const stepInput = wrap.querySelector('input');
+            const [downBtn, upBtn, down10Btn, up10Btn] = wrap.querySelectorAll('button');
+            const readout = wrap.querySelector('.count-readout');
+
+            const pushToReal = () => {
+                const c = parseFloat(stepInput.value);
+                if (stepInput.value === '' || isNaN(c)) {
+                    real.value = '';
+                } else {
+                    real.value = String(Math.round(c * mult * 100) / 100);
+                }
+                readout.textContent = real.value === '' ? ('\u00d7 ' + fmtMoney(mult)) : ('= ' + fmtMoney(parseFloat(real.value)));
+                real.dispatchEvent(new Event('input', { bubbles: true }));
+            };
+            const bump = delta => {
+                const c = parseFloat(stepInput.value);
+                const next = Math.max(0, Math.round(((isNaN(c) ? 0 : c) + delta) * 100) / 100);
+                stepInput.value = String(next);
+                pushToReal();
+            };
+
+            stepInput.addEventListener('input', pushToReal);
+            upBtn.addEventListener('click', () => bump(1));
+            downBtn.addEventListener('click', () => bump(-1));
+            down10Btn.addEventListener('click', () => bump(-10));
+            up10Btn.addEventListener('click', () => bump(10));
+            stepInput.addEventListener('keydown', e => {
+                if (e.key === 'Enter') e.preventDefault();
+            });
+
+            real._syncCount = () => {
+                const v = parseFloat(real.value);
+                stepInput.value = (real.value === '' || isNaN(v)) ? '' : String(Math.round((v / mult) * 100) / 100);
+                readout.textContent = real.value === '' ? ('\u00d7 ' + fmtMoney(mult)) : ('= ' + fmtMoney(v));
+            };
+        });
+
+        document.querySelectorAll('[data-count-toggle]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const key = btn.dataset.countToggle;
+                countModes[key] = !countModes[key];
+                try { localStorage.setItem('changefund-count-mode-v2-' + key, countModes[key] ? '1' : '0'); } catch (e) {}
+                applyCountMode();
+            });
+        });
+        applyCountMode();
+    }
+
+    function applyCountMode() {
+        document.querySelectorAll('[data-count-toggle]').forEach(btn => {
+            const section = btn.closest('.form-section');
+            const countMode = !!countModes[btn.dataset.countToggle];
+            section.classList.toggle('count-mode', countMode);
+            btn.classList.toggle('active', countMode);
+            btn.setAttribute('aria-pressed', countMode ? 'true' : 'false');
+            btn.textContent = countMode ? 'Enter Value' : 'Enter Count';
+            const sub = section.querySelector('.section-subtitle');
+            if (sub) sub.textContent = countMode ? 'Enter Count' : 'Enter The Value Amount';
+        });
+        refreshCountInputs();
+    }
+
+    // Re-derives each stepper from its real input (after toggle, reset, or loading an entry to edit).
+    function refreshCountInputs() {
+        document.querySelectorAll('input[data-multiplier]').forEach(real => {
+            if (real._syncCount) real._syncCount();
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
+        setupCountInputs();
         document.querySelectorAll('.custom-decimal-wrapper').forEach(wrapper => {
             const textInput = wrapper.querySelector('.custom-decimal-input');
             const hiddenInput = wrapper.querySelector('.custom-decimal-hidden');
@@ -1651,6 +1881,7 @@
         warningDiv.innerHTML = '';
         discrepancyAcknowledged = false;
         exitEditMode();
+        refreshCountInputs();
         successMessage.style.display = 'none';
         formContainer.style.display = 'block';
         window.scrollTo(0, 0);
@@ -1701,6 +1932,7 @@
         });
         prefillCustomDecimalGroup(TILL_FIELD_NAMES, SHEET_COL_TILLS, row);
         prefillCustomDecimalGroup(BAG_FIELD_NAMES, SHEET_COL_BAGS, row);
+        refreshCountInputs();
 
         // Whoever makes the correction selects their own name; it isn't assumed from the original entry.
         document.getElementById('employee-name').value = '';
