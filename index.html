@@ -1727,6 +1727,14 @@
             errors.push("Please select an employee name.");
         }
 
+        // In count mode a blank counter shows a gray 0, so treat it as a real 0 instead of "missing".
+        document.querySelectorAll('.count-mode input[data-multiplier]').forEach(real => {
+            if (real.value === '') {
+                real.value = '0';
+                if (real._syncCount) real._syncCount();
+            }
+        });
+
         // 2. Validate all mandatory number inputs
         const mandatoryInputs = form.querySelectorAll('.mandatory-input');
         mandatoryInputs.forEach(input => {
