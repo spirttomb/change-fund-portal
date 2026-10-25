@@ -136,6 +136,55 @@
         }
 
 
+
+        /* Shift picker (AM / Handover / PM) */
+        .shift-picker {
+            display: flex;
+            gap: 8px;
+        }
+
+        .shift-btn {
+            flex: 1 1 0;
+            min-height: 46px;
+            border: 1px solid var(--text-muted);
+            border-radius: 6px;
+            background: transparent;
+            color: var(--text-main);
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            padding: 0 6px;
+            touch-action: manipulation;
+        }
+
+        .shift-btn:hover { background: rgba(255,255,255,0.12); }
+
+        .shift-btn.active {
+            background: #ffffff;
+            color: var(--primary);
+            border-color: #ffffff;
+        }
+
+        .shift-note {
+            margin-top: 10px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: #dbeafe;
+            color: #1e3a8a;
+            border: 1px solid #3b82f6;
+        }
+
+        .shift-note.warn {
+            background: #fef3c7;
+            color: #92400e;
+            border-color: #f59e0b;
+        }
+
+        .shift-hidden { display: none !important; }
+
         /* Count mode (Boxes / Rolls) */
         .header-controls {
             display: inline-flex;
@@ -474,6 +523,36 @@
             width: 100%;
         }
 
+        /* "Not 150?" flag: lets a till or bag hold a full amount like 146.46 instead of 150.XX */
+        .not150-toggle {
+            align-self: flex-start;
+            margin-top: 5px;
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid rgba(203, 213, 225, 0.45);
+            border-radius: 999px;
+            padding: 3px 10px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            line-height: 1.3;
+            touch-action: manipulation;
+        }
+
+        .not150-toggle:hover { background: rgba(255,255,255,0.12); }
+
+        .not150-toggle.active {
+            background: #fef3c7;
+            color: #92400e;
+            border-color: #f59e0b;
+        }
+
+        .custom-decimal-wrapper.custom-amount {
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.35);
+        }
+
         .conditional-group {
             display: none;
         }
@@ -590,6 +669,15 @@
                             <option value="Kendal">Kendal</option>
                         </select>
                     </div>
+                    <div class="form-group" style="margin-top: 14px;">
+                        <label>Shift</label>
+                        <div class="shift-picker" id="shift-picker" role="group" aria-label="Shift">
+                            <button type="button" class="shift-btn" data-shift="AM" aria-pressed="false">AM</button>
+                            <button type="button" class="shift-btn" data-shift="Handover" aria-pressed="false">Handover</button>
+                            <button type="button" class="shift-btn" data-shift="PM" aria-pressed="false">PM</button>
+                        </div>
+                        <div id="shift-note" class="shift-note" style="display:none;"></div>
+                    </div>
                 </div>
 
                 <!-- Top Drawer -->
@@ -616,7 +704,7 @@
                 </div>
 
                 <!-- Cash -->
-                <div class="form-section">
+                <div class="form-section" id="section-cash">
                     <h3>Cash <span class="section-subtitle">Enter The Value Amount</span></h3>
                     <div class="grid">
                         <div class="form-group"><label>Singles</label><input type="number" step="any" name="entry.252905748" class="mandatory-input"></div>
@@ -626,7 +714,7 @@
                 </div>
 
                 <!-- Tills -->
-                <div class="form-section">
+                <div class="form-section" id="section-tills">
                     <h3>Tills</h3>
                     <div class="grid">
                         <div class="form-group">
@@ -673,7 +761,7 @@
                 </div>
 
                 <!-- Bags -->
-                <div class="form-section">
+                <div class="form-section" id="section-bags">
                     <h3>Bags</h3>
                     <div class="grid">
                         <div class="form-group">
@@ -959,6 +1047,33 @@
     // If your sheet has it somewhere else, change this index to match.
     const SHEET_COL_MODIFIED_OF = 26;
 
+    // ---- Shift (AM / Handover / PM) ----
+    // The shift is stored inside the existing "modified of" form field/column so no new Google Form
+    // question is needed. Cell format: "<original timestamp key or none>|<shift>", e.g. "none|AM".
+    // Older rows ("none" or just a timestamp key) still parse fine and simply have no shift.
+    const SHIFTS = ['AM', 'Handover', 'PM'];
+    let selectedShift = '';
+    let shiftContext = { lastPM: null, todayAM: null };
+    let handoverCopyActive = false;  // true while Cash / Tills / Bags were auto-copied from today's AM entry
+    let tillAcknowledged = false;    // user chose "Submit Anyway" on an AM till mismatch
+
+    function parseModCell(v) {
+        if (v === undefined || v === null) return { orig: '', shift: '' };
+        const str = String(v).trim();
+        const i = str.lastIndexOf('|');
+        let orig = i >= 0 ? str.slice(0, i).trim() : str;
+        let shift = i >= 0 ? str.slice(i + 1).trim() : '';
+        if (orig.toLowerCase() === 'none') orig = '';
+        if (!SHIFTS.includes(shift)) shift = '';
+        return { orig, shift };
+    }
+    function buildModCell(orig, shift) {
+        return (orig || 'none') + (shift ? '|' + shift : '');
+    }
+    function getRowShift(row) {
+        return parseModCell(row ? row[SHEET_COL_MODIFIED_OF] : '').shift;
+    }
+
     // ---- Edit Entry state ----
     let isEditingEntry = false;
     let editingOriginalKey = '';       // stable reference (original timestamp) to the entry being replaced
@@ -977,9 +1092,7 @@
     // "none" is the placeholder value normal (non-edit) submissions send, so the Google Form question
     // can be marked Required without silently blocking every ordinary entry. Treat it like blank.
     function isRealModificationValue(v) {
-        if (v === undefined || v === null) return false;
-        const s = String(v).trim();
-        return s !== '' && s.toLowerCase() !== 'none';
+        return parseModCell(v).orig !== '';
     }
 
     // Which quick-entry flow is active: 'deposit' or 'received'
@@ -1003,6 +1116,7 @@
         } else {
             previousEntryTotal = 0; // no prior entries logged yet
         }
+        computeShiftContext();
         updateLiveTracker();
     }
 
@@ -1050,10 +1164,253 @@
                     </td>
                 </tr>
             </table>
-        `;
+        ` + getTillsCompareHtml();
     }
 
     // Initialize custom decimal inputs sync
+
+
+    // ---------- Shift logic ----------
+    // Rows not replaced by a later correction, as indexes into globalSheetData (oldest first).
+    function getVisibleRowIndexes() {
+        const superseded = new Set();
+        for (let j = 1; j < globalSheetData.length; j++) {
+            const o = parseModCell(globalSheetData[j][SHEET_COL_MODIFIED_OF]).orig;
+            if (o) superseded.add(o);
+        }
+        const out = [];
+        for (let i = 1; i < globalSheetData.length; i++) {
+            if (!superseded.has(getRowModificationKey(globalSheetData[i]))) out.push(i);
+        }
+        return out;
+    }
+
+    // lastPM: most recent PM entry (last night's close). todayAM: most recent AM entry dated today.
+    function computeShiftContext() {
+        let lastPM = null, todayAM = null;
+        const now = new Date();
+        const sameDay = d => d instanceof Date && !isNaN(d) &&
+            d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d.getDate() === now.getDate();
+        getVisibleRowIndexes().forEach(i => {
+            const row = globalSheetData[i];
+            const sh = getRowShift(row);
+            if (sh === 'PM') lastPM = row;
+            if (sh === 'AM' && sameDay(row[0])) todayAM = row;
+        });
+        shiftContext = { lastPM, todayAM };
+    }
+
+    // Always pulls fresh sheet data (the page can stay open for hours) before AM / Handover logic runs.
+    async function refreshShiftData() {
+        await fetchSheetData();
+        if (globalSheetData.length > 1) {
+            previousEntryTotal = computeRowGrandTotal(globalSheetData[globalSheetData.length - 1]);
+        }
+        computeShiftContext();
+    }
+
+    function clearCashTillsBags() {
+        CASH_FIELD_NAMES.forEach(n => {
+            const el = form.querySelector(`[name="${n}"]`);
+            if (el) el.value = '';
+        });
+        TILL_FIELD_NAMES.concat(BAG_FIELD_NAMES).forEach(n => {
+            const h = form.querySelector(`[name="${n}"]`);
+            if (!h) return;
+            h.value = '';
+            const w = h.closest('.custom-decimal-wrapper');
+            const t = w.querySelector('.custom-decimal-input');
+            if (t) t.value = '';
+            if (w._setCustom) w._setCustom(false);
+        });
+    }
+
+    function setShiftSectionsHidden(hidden) {
+        ['section-cash', 'section-tills', 'section-bags'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.classList.toggle('shift-hidden', hidden);
+        });
+    }
+
+    function showShiftNote(text, warn) {
+        const note = document.getElementById('shift-note');
+        if (!note) return;
+        if (!text) { note.style.display = 'none'; note.textContent = ''; return; }
+        note.textContent = text;
+        note.className = 'shift-note' + (warn ? ' warn' : '');
+        note.style.display = 'block';
+    }
+
+    function syncModifiedField() {
+        const f = document.getElementById('modified-of-field');
+        if (f) f.value = buildModCell(isEditingEntry ? editingOriginalKey : '', selectedShift);
+    }
+
+    function paintShiftButtons() {
+        document.querySelectorAll('.shift-btn').forEach(b => {
+            const on = b.dataset.shift === selectedShift;
+            b.classList.toggle('active', on);
+            b.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+    }
+
+    async function setShift(shift) {
+        selectedShift = shift;
+        paintShiftButtons();
+        syncModifiedField();
+        tillAcknowledged = false;
+        discrepancyAcknowledged = false;
+        await applyShiftMode();
+    }
+
+    async function applyShiftMode() {
+        showShiftNote('');
+        const needsData = !isEditingEntry && (selectedShift === 'AM' || selectedShift === 'Handover');
+        if (needsData) await refreshShiftData();
+
+        // User may have changed shift while the sheet was loading
+        const shiftNow = selectedShift;
+
+        if (isEditingEntry || shiftNow !== 'Handover') {
+            if (handoverCopyActive) { clearCashTillsBags(); handoverCopyActive = false; }
+            setShiftSectionsHidden(false);
+            updateLiveTracker();
+            return;
+        }
+
+        // Handover: copy Cash, Tills and Bags from today's AM entry
+        const am = shiftContext.todayAM;
+        const cols = SHEET_COL_CASH.concat(SHEET_COL_TILLS, SHEET_COL_BAGS);
+        const complete = am && cols.every(c => am[c] !== undefined && am[c] !== null && am[c] !== '');
+
+        if (complete) {
+            CASH_FIELD_NAMES.forEach((n, i) => {
+                const el = form.querySelector(`[name="${n}"]`);
+                if (el) el.value = am[SHEET_COL_CASH[i]];
+            });
+            prefillCustomDecimalGroup(TILL_FIELD_NAMES, SHEET_COL_TILLS, am);
+            prefillCustomDecimalGroup(BAG_FIELD_NAMES, SHEET_COL_BAGS, am);
+            handoverCopyActive = true;
+            setShiftSectionsHidden(true);
+            const when = am[0] instanceof Date ? am[0].toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '';
+            const who = am[1] ? (' by ' + String(am[1])) : '';
+            showShiftNote(`Cash, Tills and Bags were copied from today's AM entry${when ? ' (' + when + who + ')' : ''}.`);
+        } else {
+            if (handoverCopyActive) { clearCashTillsBags(); handoverCopyActive = false; }
+            setShiftSectionsHidden(false);
+            showShiftNote(am
+                ? "Today's AM entry is incomplete, so enter the Cash, Tills and Bags counts yourself."
+                : 'No AM entry found for today, so enter the Cash, Tills and Bags counts yourself.', true);
+        }
+        updateLiveTracker();
+    }
+
+    // Used when form is reset or a correction is loaded.
+    function resetShiftState() {
+        selectedShift = '';
+        handoverCopyActive = false;
+        tillAcknowledged = false;
+        paintShiftButtons();
+        setShiftSectionsHidden(false);
+        showShiftNote('');
+    }
+
+    // Register tills vs last night's PM (AM shift only)
+    function getTillsCompare() {
+        if (isEditingEntry || selectedShift !== 'AM') return null;
+        const pm = shiftContext.lastPM;
+        if (!pm) return { pm: null, rows: [], mismatches: [] };
+        const rows = TILL_FIELD_NAMES.map((n, i) => {
+            const el = form.querySelector(`[name="${n}"]`);
+            const hasCur = !!el && el.value !== '';
+            const cur = hasCur ? parseNum(el.value) : 0;
+            const prev = parseNum(pm[SHEET_COL_TILLS[i]]);
+            return { label: 'Till #' + (i + 1), prev, cur, hasCur, diff: cur - prev, off: hasCur && Math.abs(cur - prev) >= 0.005 };
+        });
+        return { pm, rows, mismatches: rows.filter(r => r.off) };
+    }
+
+    function getTillsCompareHtml() {
+        const cmp = getTillsCompare();
+        if (!cmp) return '';
+        if (!cmp.pm) {
+            return `<p style="text-align:center; color: var(--text-muted); margin: 14px 0 0 0;">No PM entry found to compare the register tills against.</p>`;
+        }
+        const body = cmp.rows.map(r => `
+                <tr>
+                    <td style="font-weight: 600;">${r.label}</td>
+                    <td style="text-align: center;">$${r.prev.toFixed(2)}</td>
+                    <td style="text-align: center; font-weight: 700; color: ${r.off ? 'var(--diff-color)' : 'var(--primary)'};">${r.hasCur ? '$' + r.cur.toFixed(2) : '-'}</td>
+                    <td style="text-align: center; color: ${r.off ? 'var(--diff-color)' : '#15803d'}; font-weight: 600;">${!r.hasCur ? '' : (r.off ? (r.diff > 0 ? '+' : '-') + '$' + Math.abs(r.diff).toFixed(2) : 'Match')}</td>
+                </tr>`).join('');
+        return `
+            <div style="margin-top: 18px; font-weight: 700; text-align: center;">Register Tills vs Last Night's PM</div>
+            <table style="margin-top: 8px;">
+                <tr><td></td><td style="text-align:center; font-weight: 600;">PM</td><td style="text-align:center; font-weight: 600;">Now</td><td></td></tr>
+                ${body}
+            </table>`;
+    }
+
+    function showTillWarning(mismatches) {
+        const list = mismatches.map(r => `${r.label}: PM $${r.prev.toFixed(2)}, now $${r.cur.toFixed(2)} (${r.diff > 0 ? 'over' : 'under'} by $${Math.abs(r.diff).toFixed(2)})`).join('<br>');
+        warningDiv.innerHTML = `
+            <div>The register tills don't match last night's PM entry.</div>
+            <div style="font-weight: normal; margin-top: 8px;">${list}</div>
+            <div style="display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap;">
+                <button type="button" class="action-btn" id="btn-till-anyway" style="margin-top: 0; width: auto; padding: 8px 16px; background-color: #b91c1c;">Submit Anyway</button>
+                <button type="button" class="action-btn" id="btn-till-cancel" style="margin-top: 0; width: auto; padding: 8px 16px; background-color: var(--card-bg); color: var(--text-main);">Go Back &amp; Fix</button>
+            </div>
+        `;
+        warningDiv.style.display = 'block';
+        document.getElementById('btn-till-anyway').addEventListener('click', () => {
+            tillAcknowledged = true;
+            warningDiv.style.display = 'none';
+            warningDiv.innerHTML = '';
+            form.requestSubmit();
+        });
+        document.getElementById('btn-till-cancel').addEventListener('click', () => {
+            warningDiv.style.display = 'none';
+            warningDiv.innerHTML = '';
+        });
+        try { warningDiv.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (err) {}
+    }
+
+
+    // ---------- "Not 150?" flag for Tills and Bags ----------
+    function setupNot150Toggles() {
+        document.querySelectorAll('.custom-decimal-wrapper').forEach(wrapper => {
+            const textInput = wrapper.querySelector('.custom-decimal-input');
+            const hiddenInput = wrapper.querySelector('.custom-decimal-hidden');
+            const prefix = wrapper.querySelector('.custom-decimal-prefix');
+            const group = wrapper.closest('.form-group');
+
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'not150-toggle';
+            btn.setAttribute('aria-pressed', 'false');
+            btn.textContent = 'Not 150?';
+            group.appendChild(btn);
+
+            wrapper._setCustom = (on) => {
+                wrapper.classList.toggle('custom-amount', !!on);
+                btn.classList.toggle('active', !!on);
+                btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+                btn.textContent = on ? 'Not 150 (undo)' : 'Not 150?';
+                prefix.textContent = on ? '$' : '150.';
+                textInput.maxLength = on ? 7 : 2;
+                textInput.placeholder = on ? '0.00' : '00';
+                textInput.setAttribute('inputmode', on ? 'decimal' : 'numeric');
+            };
+
+            btn.addEventListener('click', () => {
+                wrapper._setCustom(!wrapper.classList.contains('custom-amount'));
+                textInput.value = '';
+                hiddenInput.value = '';
+                textInput.dispatchEvent(new Event('input', { bubbles: true }));
+                textInput.focus();
+            });
+        });
+    }
 
     // ---------- Count mode for Boxes (top drawer) and Rolls (coins) ----------
     // The real named inputs stay the source of truth (value = count x multiplier), so submission,
@@ -1167,11 +1524,27 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         setupCountInputs();
+        setupNot150Toggles();
+        document.querySelectorAll('.shift-btn').forEach(b => b.addEventListener('click', () => setShift(b.dataset.shift)));
         document.querySelectorAll('.custom-decimal-wrapper').forEach(wrapper => {
             const textInput = wrapper.querySelector('.custom-decimal-input');
             const hiddenInput = wrapper.querySelector('.custom-decimal-hidden');
             
             textInput.addEventListener('input', () => {
+                if (wrapper.classList.contains('custom-amount')) {
+                    // Flagged "Not 150": the whole amount is typed, e.g. 146.46
+                    const parts = textInput.value.replace(/[^\d.]/g, '').split('.');
+                    const ip = parts[0].slice(0, 4);
+                    const fp = parts.length > 1 ? parts.slice(1).join('').slice(0, 2) : null;
+                    const shown = fp === null ? ip : `${ip}.${fp}`;
+                    textInput.value = shown;
+                    if (ip === '' && !fp) {
+                        hiddenInput.value = '';
+                    } else {
+                        hiddenInput.value = (ip === '' ? '0' : ip) + (fp ? `.${fp}` : '');
+                    }
+                    return;
+                }
                 let val = textInput.value.replace(/\D/g, '').slice(0, 2);
                 textInput.value = val;
                 if (val === '') {
@@ -1189,6 +1562,7 @@
         const changeFundForm = document.getElementById('change-fund-form');
         changeFundForm.addEventListener('input', () => {
             discrepancyAcknowledged = false; // any edit invalidates a previous "submit anyway" confirmation
+            tillAcknowledged = false;
             updateLiveTracker();
         });
         changeFundForm.addEventListener('change', () => {
@@ -1307,7 +1681,7 @@
         for (let j = 1; j < globalSheetData.length; j++) {
             const modOf = globalSheetData[j][SHEET_COL_MODIFIED_OF];
             if (isRealModificationValue(modOf)) {
-                supersededKeys.add(String(modOf).trim());
+                supersededKeys.add(parseModCell(modOf).orig);
             }
         }
 
@@ -1338,6 +1712,8 @@
                     let properName = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
                     
                     let label = `${formattedDate} - ${properName}`;
+                    const rowShiftLabel = getRowShift(globalSheetData[i]);
+                    if (rowShiftLabel) label += ` - ${rowShiftLabel}`;
                     const modOfVal = globalSheetData[i][SHEET_COL_MODIFIED_OF];
                     if (isRealModificationValue(modOfVal)) {
                         label += ' - Modified';
@@ -1726,6 +2102,9 @@
         if (!nameSelect.value) {
             errors.push("Please select an employee name.");
         }
+        if (!selectedShift) {
+            errors.push("Please choose a shift (AM, Handover or PM).");
+        }
 
         // In count mode a blank counter shows a gray 0, so treat it as a real 0 instead of "missing".
         document.querySelectorAll('.count-mode input[data-multiplier]').forEach(real => {
@@ -1749,7 +2128,7 @@
             const textInput = wrapper.querySelector('.custom-decimal-input');
             const label = wrapper.closest('.form-group').querySelector('label').textContent;
             
-            if (textInput.value.length === 1) {
+            if (!wrapper.classList.contains('custom-amount') && textInput.value.length === 1) {
                 errors.push(`The entry for "${label}" must specify the hundreds place (two digits). Entering a single digit is ambiguous (could mean .09 or .90).`);
             }
         });
@@ -1760,6 +2139,15 @@
             errorDiv.style.display = 'block';
             window.scrollTo({ top: 0, behavior: 'smooth' });
             return;
+        }
+
+        // 3b. AM only: register tills must match last night's PM (or be confirmed)
+        if (!tillAcknowledged && !isEditingEntry && selectedShift === 'AM') {
+            const cmp = getTillsCompare();
+            if (cmp && cmp.mismatches.length > 0) {
+                showTillWarning(cmp.mismatches);
+                return;
+            }
         }
 
         // 4. Reconciliation check (not applicable when correcting a past entry)
@@ -1818,10 +2206,10 @@
 
         const formData = new FormData(form);
         const { currentTotal } = getLiveTotals();
+        formData.set(MODIFIED_OF_FIELD, buildModCell(isEditingEntry ? editingOriginalKey : '', selectedShift));
 
         if (isEditingEntry) {
             // The main form has no Received/Deposited inputs, so carry the original's values forward untouched.
-            formData.set(MODIFIED_OF_FIELD, editingOriginalKey);
             if (editingOriginalReceived !== '' && editingOriginalReceived !== undefined && editingOriginalReceived !== null) {
                 formData.set(RECEIVED_FIELD, editingOriginalReceived.toString());
             }
@@ -1844,6 +2232,7 @@
 
             previousEntryTotal = currentTotal;
             discrepancyAcknowledged = false;
+            tillAcknowledged = false;
             exitEditMode();
             const combinedBtn = document.getElementById('btn-copy-and-open');
             if (combinedBtn) {
@@ -1883,11 +2272,13 @@
             const hiddenInput = wrapper.querySelector('.custom-decimal-hidden');
             textInput.value = '';
             hiddenInput.value = '';
+            if (wrapper._setCustom) wrapper._setCustom(false);
         });
         errorDiv.style.display = 'none';
         warningDiv.style.display = 'none';
         warningDiv.innerHTML = '';
         discrepancyAcknowledged = false;
+        resetShiftState();
         exitEditMode();
         refreshCountInputs();
         successMessage.style.display = 'none';
@@ -1902,8 +2293,7 @@
         editingOriginalKey = '';
         editingOriginalReceived = '';
         editingOriginalDeposited = '';
-        const modifiedField = document.getElementById('modified-of-field');
-        if (modifiedField) modifiedField.value = 'none';
+        syncModifiedField();
         const banner = document.getElementById('edit-mode-banner');
         if (banner) banner.style.display = 'none';
         if (submitBtn) submitBtn.textContent = 'Submit Entry';
@@ -1921,7 +2311,11 @@
         editingOriginalReceived = row[SHEET_COL_RECEIVED];
         editingOriginalDeposited = row[SHEET_COL_DEPOSITED];
 
-        document.getElementById('modified-of-field').value = editingOriginalKey;
+        // Keep the original's shift; corrections show every section (no Handover copying)
+        resetShiftState();
+        selectedShift = getRowShift(row);
+        paintShiftButtons();
+        syncModifiedField();
 
         TOP_DRAWER_FIELD_NAMES.forEach((fname, i) => {
             const el = form.querySelector(`[name="${fname}"]`);
@@ -1970,11 +2364,23 @@
             const textInput = wrapper.querySelector('.custom-decimal-input');
             const raw = row[sheetCols[i]];
 
-            if (raw !== undefined && raw !== null && raw !== '' && String(raw).includes('.')) {
-                const digits = String(raw).split('.')[1].padEnd(2, '0').slice(0, 2);
-                textInput.value = digits;
-                hiddenInput.value = `150.${digits}`;
+            const rawNum = parseFloat(raw);
+            if (raw !== undefined && raw !== null && raw !== '' && !isNaN(rawNum)) {
+                // Whole numbers (e.g. exactly 150) come back without a decimal point; treat as .00
+                if (Math.floor(rawNum + 1e-9) === 150) {
+                    const digits = String(Math.round((rawNum - 150) * 100)).padStart(2, '0').slice(0, 2);
+                    if (wrapper._setCustom) wrapper._setCustom(false);
+                    textInput.value = digits;
+                    hiddenInput.value = `150.${digits}`;
+                } else {
+                    // Not a 150.XX amount: load it as a flagged full amount
+                    const full = (Math.round(rawNum * 100) / 100).toFixed(2);
+                    if (wrapper._setCustom) wrapper._setCustom(true);
+                    textInput.value = full;
+                    hiddenInput.value = full;
+                }
             } else {
+                if (wrapper._setCustom) wrapper._setCustom(false);
                 textInput.value = '';
                 hiddenInput.value = '';
             }
@@ -2194,7 +2600,7 @@
 
         // Quick entries always create a brand-new row, never a correction — but the field still needs
         // a non-empty value in case the Google Form question is set to Required.
-        fd.append(MODIFIED_OF_FIELD, 'none');
+        fd.append(MODIFIED_OF_FIELD, buildModCell('', getRowShift(row)));
 
         const submitBtnQuick = document.getElementById('quick-submit-btn');
         const originalBtnText = submitBtnQuick.textContent;
