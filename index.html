@@ -1209,11 +1209,8 @@
         computeShiftContext();
     }
 
+    // Clears the Tills and Bags that Handover auto-copied (Cash is always entered by hand).
     function clearCashTillsBags() {
-        CASH_FIELD_NAMES.forEach(n => {
-            const el = form.querySelector(`[name="${n}"]`);
-            if (el) el.value = '';
-        });
         TILL_FIELD_NAMES.concat(BAG_FIELD_NAMES).forEach(n => {
             const h = form.querySelector(`[name="${n}"]`);
             if (!h) return;
@@ -1226,7 +1223,7 @@
     }
 
     function setShiftSectionsHidden(hidden) {
-        ['section-cash', 'section-tills', 'section-bags'].forEach(id => {
+        ['section-tills', 'section-bags'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.classList.toggle('shift-hidden', hidden);
         });
@@ -1278,29 +1275,25 @@
             return;
         }
 
-        // Handover: copy Cash, Tills and Bags from today's AM entry
+        // Handover: copy Tills and Bags from today's AM entry (Cash is still counted by hand)
         const am = shiftContext.todayAM;
-        const cols = SHEET_COL_CASH.concat(SHEET_COL_TILLS, SHEET_COL_BAGS);
+        const cols = SHEET_COL_TILLS.concat(SHEET_COL_BAGS);
         const complete = am && cols.every(c => am[c] !== undefined && am[c] !== null && am[c] !== '');
 
         if (complete) {
-            CASH_FIELD_NAMES.forEach((n, i) => {
-                const el = form.querySelector(`[name="${n}"]`);
-                if (el) el.value = am[SHEET_COL_CASH[i]];
-            });
             prefillCustomDecimalGroup(TILL_FIELD_NAMES, SHEET_COL_TILLS, am);
             prefillCustomDecimalGroup(BAG_FIELD_NAMES, SHEET_COL_BAGS, am);
             handoverCopyActive = true;
             setShiftSectionsHidden(true);
             const when = am[0] instanceof Date ? am[0].toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : '';
             const who = am[1] ? (' by ' + String(am[1])) : '';
-            showShiftNote(`Cash, Tills and Bags were copied from today's AM entry${when ? ' (' + when + who + ')' : ''}.`);
+            showShiftNote(`Tills and Bags were copied from today's AM entry${when ? ' (' + when + who + ')' : ''}.`);
         } else {
             if (handoverCopyActive) { clearCashTillsBags(); handoverCopyActive = false; }
             setShiftSectionsHidden(false);
             showShiftNote(am
-                ? "Today's AM entry is incomplete, so enter the Cash, Tills and Bags counts yourself."
-                : 'No AM entry found for today, so enter the Cash, Tills and Bags counts yourself.', true);
+                ? "Today's AM entry is incomplete, so enter the Tills and Bags counts yourself."
+                : 'No AM entry found for today, so enter the Tills and Bags counts yourself.', true);
         }
         updateLiveTracker();
     }
